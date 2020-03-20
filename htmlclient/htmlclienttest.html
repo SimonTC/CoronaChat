@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="1000" height="1000"
+style="border:1px solid #c3c3c3;">
+Your browser does not support the canvas element.
+</canvas>
+
+<script>
+function getMousePos(canvas, event) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
+}
+function isInside(pos, p){
+    return pos.x > p.posx && pos.x < p.posx+p.width && p.posy < p.posy+p.height && pos.y > p.posy
+}
+
+function clearCanvas()
+{
+    var ctx = canvas.getContext("2d");
+    var rect = canvas.getBoundingClientRect();
+    ctx.fillStyle = "#cecece";
+    ctx.fillRect(rect.left, rect.top, rect.right, rect.bottom);
+}
+
+function drawParticipant( p, index) {
+  var ctx = canvas.getContext("2d");
+  //var rect = canvas.getBoundingClientRect();
+  ctx.fillStyle = p.color;
+  ctx.fillRect(p.posx, p.posy, p.width, p.height);
+  ctx.font = "30px Arial";
+  ctx.fillText(p.name, p.posx, p.posy);
+}
+
+function updateScreen()
+{
+    clearCanvas()
+    participants.forEach(drawParticipant)
+}
+
+//Main... 
+var participants = [{name: "player", posx:20, posy:20, width:20, height:20, color:"#0000ff"}, {name: "guest", posx:200, posy:200, width:20, height:20, color: "#FF0000" }]
+var selectedIndex = -1
+var canvas = document.getElementById("myCanvas");
+updateScreen()
+
+
+
+
+// event listeners
+
+canvas.addEventListener('mousedown', function(evt) {
+    var mousePos = getMousePos(canvas, evt);
+    if (isInside(mousePos,participants[0])) {
+        selectedIndex = 0
+        console.log("mouse down " + participants[selectedIndex].name)
+    }
+}, false);
+
+canvas.addEventListener('mouseup', function(evt) {
+        console.log("mouse up")
+        selectedIndex = -1
+}, false);
+
+canvas.addEventListener('mousemove', e => {
+    if(selectedIndex >= 0) {
+        console.log("mouse move")
+        var rect = canvas.getBoundingClientRect();
+        participants[selectedIndex].posx=e.clientX - rect.left
+        participants[selectedIndex].posy=e.clientY - rect.top
+        updateScreen()
+    }
+});
+</script>
+
+</body>
+</html>
+
