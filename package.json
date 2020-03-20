@@ -2,8 +2,9 @@
   "name": "coronachat",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
+    "start-client": "parcel client/index.html",
     "start-server": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/SimonTC/CoronaChat#readme",
   "dependencies": {
+    "parcel": "^1.12.4",
     "ws": "^7.2.3"
   }
 }

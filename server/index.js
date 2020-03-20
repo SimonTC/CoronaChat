@@ -1,13 +1,8 @@
-const ws = require('ws');
-
-// TODO: Read from configuration file
-const configuration = {
-  port: 3000,
-  maxConnections: 255
-}
+const ws = require("ws");
+const config = require("../config/index.json");
 
 const socketServer = new ws.Server({
-  port: configuration.port,
+  port: config.socketServerPort,
   perMessageDeflate: false
 });
 
@@ -19,7 +14,7 @@ socketServer.on('error', _onConnectionError);
 function _onConnectionEstablished(socket) {
   console.info('Client has connected.');
 
-  if (connectedSockets.length < configuration.maxConnections) {
+  if (connectedSockets.length < config.maxConnections) {
     socket.on('move', (message) => {
       // TODO: Handle person move
     });
