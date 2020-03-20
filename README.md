@@ -1,1 +1,1 @@
-Install dependencies with `npm install`, start server with `npm run start-server`
+Install dependencies with `npm install`, start server with `npm run start-server`, start client with `npm run start-client`.
