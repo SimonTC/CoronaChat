@@ -19,8 +19,8 @@ function _onConnectionEstablished(socket) {
       // TODO: Handle person move
     });
 
-    socket.on('error', _closeConnection(socket));
-    socket.on('close', _closeConnection(socket));
+    socket.on('error', _closeConnection);
+    socket.on('close', _closeConnection);
 
     connectedSockets.push(socket);
   } else {
