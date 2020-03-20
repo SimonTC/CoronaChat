@@ -1,4 +1,4 @@
-import { Server } from 'ws';
+const ws = require('ws');
 
 // TODO: Read from configuration file
 const configuration = {
@@ -6,18 +6,20 @@ const configuration = {
   maxConnections: 255
 }
 
-const socketServer = new Server({
+const socketServer = new ws.Server({
   port: configuration.port,
   perMessageDeflate: false
 });
+
+const connectedSockets = [];
 
 socketServer.on('connection', _onConnectionEstablished);
 socketServer.on('error', _onConnectionError);
 
 function _onConnectionEstablished(socket) {
-  Logger.info('Client has connected.');
+  console.info('Client has connected.');
 
-  if (this.#sockets.length < configuration.maxConnections) {
+  if (connectedSockets.length < configuration.maxConnections) {
     socket.on('move', (message) => {
       // TODO: Handle person move
     });
@@ -25,16 +27,16 @@ function _onConnectionEstablished(socket) {
     socket.on('error', _closeConnection(socket));
     socket.on('close', _closeConnection(socket));
 
-    this.#sockets.push(socket);
+    connectedSockets.push(socket);
   } else {
-    Logger.info('Server is full');
+    console.info('Server is full');
 
     socket.close();
   }
 }
 
 function _onConnectionError(error) {
-  Logger.error(`Unhandled error code: ${error}.`);
+  console.error(`Unhandled error code: ${error}.`);
 
   process.exit(1);
 }
