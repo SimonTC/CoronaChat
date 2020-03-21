@@ -22,22 +22,22 @@ function getRandomInt(max) {
 
 io.on("connection", socket => {
   Object.values(users).forEach(element => {
-      var user = {name: element.name, position: element.position, socketid: socket.id }
-      socket.broadcast.emit(EVENTS.USER_ADD, user);
-      socket.emit(EVENTS.USER_ADD, user)
-    });
+    var user = { name: element.name, position: element.position, socketid: socket.id };
+    socket.broadcast.emit(EVENTS.USER_ADD, user);
+    socket.emit(EVENTS.USER_ADD, user);
+  });
 
-  
   // Store user socket and world position in memory
   users[socket.id] = {
     socket: socket,
-    position: {x: getRandomInt(500), y: getRandomInt(500)},
+    position: { x: getRandomInt(500), y: getRandomInt(500) },
     name: "qwerty" + getRandomInt(500)
   };
 
   // Inform user privately that they are connected
   // Client should send a USER_JOIN message back with their username
   socket.emit(EVENTS.CONNECTED, "connection established");
+  // socket.emit(EVENTS.USER_JOIN, "user joined");
 
   // Handle event when user is about to disconnect (for possible cleanups)
   socket.on("disconnecting", s => {

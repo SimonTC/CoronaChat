@@ -122,7 +122,7 @@ export const addParticipant = user => {
     color: "#FF0000"
   });
   updateScreen();
-  document.getElementById('beep').play();
+  document.getElementById("beep").play();
 };
 
 let selectedIndex = -1;

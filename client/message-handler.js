@@ -48,9 +48,14 @@ export default class MessageHandler {
     console.log("Received message ", message);
   }
 
-  _socketOpenHandler() {
-    console.log("Connected to the signaling server");
+  _socketOpenHandler(d) {
+    console.log("Connected to the signaling server", "-", d);
     this.send("MESSAGE", "Hello world");
+    this.send("USER_JOIN", "my name");
+  }
+  _socketUserJoinedHandler() {
+    console.log("new user join");
+    addParticipant();
   }
 
   _socketCloseHandler() {
