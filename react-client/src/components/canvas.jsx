@@ -13,12 +13,13 @@ class Canvas extends Component {
   }
 
   componentDidMount() {
+    this.setupMediaDevices();
+
     const canvas = this.canvasRef.current;
 
     canvas.addEventListener("mousedown", this.mouseDown);
     canvas.addEventListener("mouseup", this.mouseUp);
     canvas.addEventListener("mousemove", this.mouseMove);
-    
 
     this.updateCanvas();
   }
