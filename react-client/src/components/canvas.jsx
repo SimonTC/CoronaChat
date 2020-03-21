@@ -40,9 +40,11 @@ class Canvas extends Component {
   }
 
   updateCanvas() {
-    const ctx = this.canvasRef.current.getContext("2d");
-    ctx.fillRect(0, 0, 1000, 700);
-    /*ctx.fillStyle = "#FF0000";*/
+    const canvas = this.canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
     this.state.participants.forEach(this.drawParticipant);
   }
@@ -50,7 +52,7 @@ class Canvas extends Component {
   render() {
     return (
       <div>
-        <canvas ref={this.canvasRef} width={1000} height={700} />
+        <canvas ref={this.canvasRef} width={1000} height={700}/>
       </div>
     );
   }
@@ -71,8 +73,8 @@ class Canvas extends Component {
 
   drawParticipant = (p, index, self) => {
     const ctx = this.canvasRef.current.getContext("2d");
-    ctx.fillRect(p.posx, p.posy, p.width, p.height);
     ctx.fillStyle = p.color;
+    ctx.fillRect(p.posx, p.posy, p.width, p.height);
     ctx.font = "30px Arial";
     ctx.fillText(p.name, p.posx, p.posy);
     const closestConversation = this.calculateDistanceBetweenParticipants(p, index);
