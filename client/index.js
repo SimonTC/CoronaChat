@@ -31,13 +31,32 @@ function clearCanvas()
   ctx.fillRect(rect.left, rect.top, rect.right, rect.bottom);
 }
 
-function drawParticipant( p, index) {
+function drawParticipant(p, index, self) {
 var ctx = canvas.getContext("2d");
 //var rect = canvas.getBoundingClientRect();
 ctx.fillStyle = p.color;
 ctx.fillRect(p.posx, p.posy, p.width, p.height);
 ctx.font = "30px Arial";
 ctx.fillText(p.name, p.posx, p.posy);
+const closestConversation = calculateDistanceBetweenParticipants(p, index, self)
+ctx.fillText(`closest convo: ${closestConversation}`, p.posx + 30, p.posy + 30);
+}
+
+function calculateDistanceBetweenParticipants(p, currentParticipant, participants) {
+  const currentPosition = {x: p.posx, y: p.posy};
+  let closestDistance = 5000;
+  participants.forEach((particpant, index) => {
+    if (currentParticipant !== index) {
+     const distanceBetweenParticpants = Math.abs(
+       Math.sqrt(Math.pow(currentPosition.x - particpant.posx, 2) +
+       Math.pow(currentPosition.y - particpant.posy, 2)))
+     closestDistance = distanceBetweenParticpants < closestDistance ? distanceBetweenParticpants : closestDistance
+    }
+  })
+  if (closestDistance === 5000) {
+    return 'conversations are to far'
+  }
+return closestDistance
 }
 
 function updateScreen()
