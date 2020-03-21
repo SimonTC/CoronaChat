@@ -34,10 +34,10 @@ export default class CoronaPeer {
     //   data
     // };
 
-    this.messageHandler.send({
-      type: "rtc-signal",
+    this.messageHandler.send(
+      "RTC-SIGNAL",
       data
-    });
+    );
     // this.socket.send(JSON.stringify(message));
   }
 

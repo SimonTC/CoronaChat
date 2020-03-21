@@ -28,24 +28,17 @@ export default class MessageHandler {
     socket.addEventListener("CONNECTED", this._socketOpenHandler.bind(this));
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
+    socket.addEventListener("RTC-SIGNAL", this._socketSignalHandler.bind(this));
 
     return socket;
   }
 
-  _socketMessageHandler(message) {
-    try {
-      const payload = JSON.parse(message.data);
+  _socketSignalHandler(signal) {
+    this.peer.signal(signal);
+  }
 
-      switch (payload.type) {
-        case "rtc-signal":
-          this.peer.signal(payload.data);
-          break;
-        default:
-          console.log("Other message received ", message.data);
-      }
-    } catch (error) {
-      console.error(`Failed to parse incoming message ${message}`);
-    }
+  _socketMessageHandler(message) {
+    console.log("Received message ", message.data);
   }
 
   _socketOpenHandler() {

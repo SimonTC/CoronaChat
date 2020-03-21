@@ -11,7 +11,8 @@ const EVENTS = {
   DISCONNECTED: "DISCONNECTED",
   USER_JOIN: "USER_JOIN",
   MOVE: "MOVE",
-  MESSAGE: "MESSAGE"
+  MESSAGE: "MESSAGE",
+  RTC_SIGNAL: "RTC-SIGNAL"
 };
 
 io.on("connection", socket => {
@@ -59,5 +60,10 @@ io.on("connection", socket => {
   socket.on(EVENTS.MESSAGE, msg => {
     console.log(msg);
     socket.broadcast.emit(EVENTS.MESSAGE, msg);
+  });
+
+  // Broadcast msg to other clients
+  socket.on(EVENTS.RTC_SIGNAL, msg => {
+    socket.broadcast.emit(EVENTS.RTC_SIGNAL, msg);
   });
 });
