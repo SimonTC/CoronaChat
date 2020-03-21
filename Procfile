@@ -1,1 +1,1 @@
-worker: npm run build-client && npm run start-server
+worker: npm run build-client && node server/index.js
