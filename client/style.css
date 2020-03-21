@@ -1,0 +1,42 @@
+body {
+    font-family: 'Rubik Mono One', sans-serif;
+    background-color: #07F0FF;
+}
+input[type="text"]{
+    width: 20%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
+
+button {
+    background-color: #000000;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 20%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+h1 {
+    text-align: center;
+    color: white;
+}
+
+.container {
+    padding: 16px;
+    padding-top: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
