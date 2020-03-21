@@ -22,7 +22,7 @@ export default class MessageHandler {
   }
 
   get SOCKET_SERVER() {
-    return window.location.protocol + "//" + window.location.hostname + ":" + SOCKET_SERVER.PORT;
+    return "ws//" + window.location.hostname + ":" + SOCKET_SERVER.PORT;
   }
 
   _initializeSocket() {
