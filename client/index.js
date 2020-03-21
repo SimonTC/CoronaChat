@@ -1,15 +1,21 @@
-/*const config = require("../config/index.json");
+import { socketServerPort } from "../config/index.json";
+import CoronaPeer from "./corona-peer";
 
-const ws = new WebSocket(`ws://localhost:${config.socketServerPort}`);
+const socket = new WebSocket(`ws://localhost:${socketServerPort}`);
 
-ws.onopen = () => {
-  console.log('Connected to the signaling server');
-}
+const isInitiator = location.hash === "#1";
 
-ws.onerror = err => {
-  console.error(err)
-}
-*/
+navigator.mediaDevices
+  .getUserMedia({
+    video: false,
+    audio: true
+  })
+  .then(mediaStream => {
+    const peer = new CoronaPeer(socket, isInitiator, mediaStream);
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -22,12 +28,7 @@ function getMousePos(event) {
   };
 }
 function isInside(pos, p) {
-  return (
-    pos.x > p.posx &&
-    pos.x < p.posx + p.width &&
-    p.posy < p.posy + p.height &&
-    pos.y > p.posy
-  );
+  return pos.x > p.posx && pos.x < p.posx + p.width && p.posy < p.posy + p.height && pos.y > p.posy;
 }
 
 function clearCanvas() {
@@ -40,23 +41,11 @@ function drawParticipant(p, index, self) {
   ctx.fillRect(p.posx, p.posy, p.width, p.height);
   ctx.font = "30px Arial";
   ctx.fillText(p.name, p.posx, p.posy);
-  const closestConversation = calculateDistanceBetweenParticipants(
-    p,
-    index,
-    self
-  );
-  ctx.fillText(
-    `closest convo: ${closestConversation}`,
-    p.posx + 30,
-    p.posy + 30
-  );
+  const closestConversation = calculateDistanceBetweenParticipants(p, index, self);
+  ctx.fillText(`closest convo: ${closestConversation}`, p.posx + 30, p.posy + 30);
 }
 
-function calculateDistanceBetweenParticipants(
-  p,
-  currentParticipant,
-  participants
-) {
+function calculateDistanceBetweenParticipants(p, currentParticipant, participants) {
   const currentPosition = { x: p.posx, y: p.posy };
   let closestDistance = 5000;
   participants.forEach((particpant, index) => {
@@ -68,9 +57,7 @@ function calculateDistanceBetweenParticipants(
         )
       );
       closestDistance =
-        distanceBetweenParticpants < closestDistance
-          ? distanceBetweenParticpants
-          : closestDistance;
+        distanceBetweenParticpants < closestDistance ? distanceBetweenParticpants : closestDistance;
     }
   });
   if (closestDistance === 5000) {

@@ -1,41 +1,58 @@
-const ws = require("ws");
-const config = require("../config/index.json");
-
-const socketServer = new ws.Server({
-  port: config.socketServerPort,
-  perMessageDeflate: false
+// Server setup
+const server = require("http").createServer(req => {});
+server.listen(3000, () => {
+  console.log("Listening on 3000");
 });
 
-const connectedSockets = [];
+const io = require("socket.io")(server, {
+  path: "/chat",
+  serveClient: false,
+  cookie: "coronachat"
+});
 
-socketServer.on('connection', _onConnectionEstablished);
-socketServer.on('error', _onConnectionError);
+const users = {};
 
-function _onConnectionEstablished(socket) {
-  console.info('Client has connected.');
+const EVENTS = {
+  CONNECTED: "CONNECTED",
+  DISCONNECTED: "DISCONNECTED",
+  MOVE: "MOVE",
+  MESSAGE: "MESSAGE"
+};
 
-  if (connectedSockets.length < config.maxConnections) {
-    socket.on('move', (message) => {
-      // TODO: Handle person move
-    });
+io.on("connection", socket => {
+  // Store user socket and world position in memory
+  users[socket.id] = {
+    socket,
+    position: {}
+  };
 
-    socket.on('error', _closeConnection);
-    socket.on('close', _closeConnection);
+  // Inform everyone about connection of user
+  socket.emit(EVENTS.CONNECTED, socket.id);
+  socket.broadcast.emit(EVENTS.CONNECTED, socket.id);
 
-    connectedSockets.push(socket);
-  } else {
-    console.info('Server is full');
+  // Handle event when user is about to disconnect (for possible cleanups)
+  socket.on("disconnecting", s => {
+    // Do something maybe
+  });
 
-    socket.close();
-  }
-}
+  // Handle disconnection of client
+  socket.on("disconnect", s => {
+    delete users[socket.id];
+    socket.emit(EVENTS.DISCONNECTED, socket.id);
+    socket.broadcast.emit(EVENTS.DISCONNECTED, socket.id);
+  });
 
-function _onConnectionError(error) {
-  console.error(`Unhandled error code: ${error}.`);
+  // Log errors
+  socket.on("error", console.error);
 
-  process.exit(1);
-}
+  // Store move and broadcast to other clients
+  socket.on(EVENTS.MOVE, pos => {
+    users[socket.id].position = pos;
+    socket.broadcast.emit(EVENTS.MOVE, socket.id, pos);
+  });
 
-function _closeConnection(socket) {
-  // TODO: Handle player leave
-}
+  // Broadcast msg to other clients
+  socket.on(EVENTS.MESSAGE, msg => {
+    socket.broadcast.emit(EVENTS.MESSAGE, msg);
+  });
+});
