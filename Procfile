@@ -1,2 +1,1 @@
-web: npm run build-client
-worker: npm run start-server
+worker: npm run build-client && npm run start-server
