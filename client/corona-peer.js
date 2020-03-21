@@ -7,7 +7,25 @@ export default class CoronaPeer {
     this.initiator = initiator;
     this.mediaStream = mediaStream;
     this.peer = this._getPeer(mediaStream);
-    this.messageHandler = new MessageHandler(this.peer);
+    this.messageHandler = this._getMessageHandler();
+  }
+
+  _getMessageHandler() {
+    const messageHandler = new MessageHandler();
+    
+    messageHandler.on("RTC-SIGNAL", signal => this.peer.signal(signal));
+
+    messageHandler.on("CONNECTED", () => {
+      messageHandler.send("MESSAGE", "Hello world");
+    })
+    
+    messageHandler.on("MESSAGE", message => {
+      console.log("Received message ", message);
+    });
+    
+    // messageHandler.send("USER_JOIN", `User${~~(Math.random() * 1000)}`);
+
+    return messageHandler;
   }
 
   _getPeer() {
@@ -17,8 +35,6 @@ export default class CoronaPeer {
     });
 
     // Called when a message is received from the server.
-    // this.socket.onmessage = message => this._onMessageFromServer.call(this, message, peer);
-
     peer.on("signal", this._sendSignalToPeer.bind(this));
     peer.on("error", this._onPeerError.bind(this));
     peer.on("connect", this._onPeerConnectionOpen.bind(this));
@@ -29,29 +45,11 @@ export default class CoronaPeer {
   }
 
   _sendSignalToPeer(data) {
-    // const message = {
-    //   type: "rtc-signal",
-    //   data
-    // };
-
     this.messageHandler.send(
       "RTC-SIGNAL",
       data
     );
-    // this.socket.send(JSON.stringify(message));
   }
-
-  // _onMessageFromServer(message) {
-  //   const payload = JSON.parse(message.data);
-
-  //   switch (payload.type) {
-  //     case "rtc-signal":
-  //       this.peer.signal(payload.data);
-  //       break;
-  //     default:
-  //       console.log("Other message received ", message.data);
-  //   }
-  // }
 
   _onPeerConnectionOpen() {
     console.log("CONNECT");
