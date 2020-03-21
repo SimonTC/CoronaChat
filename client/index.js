@@ -1,7 +1,4 @@
-import { socketServerPort } from "../config/index.json";
 import CoronaPeer from "./corona-peer";
-
-const socket = new WebSocket(`ws://localhost:${socketServerPort}`);
 
 const isInitiator = location.hash === "#1";
 
@@ -11,7 +8,7 @@ navigator.mediaDevices
     audio: true
   })
   .then(mediaStream => {
-    const peer = new CoronaPeer(socket, isInitiator, mediaStream);
+    const peer = new CoronaPeer(isInitiator, mediaStream);
   })
   .catch(error => {
     console.error(error);
