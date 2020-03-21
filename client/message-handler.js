@@ -1,7 +1,14 @@
 import io from "socket.io-client";
 
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+
+console.log("Accessing server on port ", port)
+
 const SOCKET_SERVER = {
-  PORT: 3000,
+  PORT: port,
   PATH: "/chat"
 };
 export default class MessageHandler {

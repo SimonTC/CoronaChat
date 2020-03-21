@@ -1,4 +1,12 @@
-const io = require("socket.io")(3000, {
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+
+console.log("Server running on port ", port)
+
+const io = require("socket.io")(port, {
   path: "/chat",
   serveClient: false,
   cookie: "coronachat"
