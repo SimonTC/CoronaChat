@@ -110,8 +110,9 @@ let participants = [
   }
 ];
 
-export const addParticipant = () => {
+export const addParticipant = socketId => {
   const newParticipant = {
+    id: socketId,
     name: `guest - ${participants.length}`,
     posx: 20 * participants.length,
     posy: 20 * participants.length,
@@ -120,6 +121,11 @@ export const addParticipant = () => {
     color: "#0000ff"
   };
   participants = [...participants, newParticipant];
+  updateScreen();
+};
+
+export const removeParticipant = socketId => {
+  participants = participants.filter(particpant => particpant.id !== socketId);
   updateScreen();
 };
 

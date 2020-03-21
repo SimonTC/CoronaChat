@@ -34,7 +34,6 @@ io.on("connection", socket => {
   // Handle disconnection of client
   socket.on("disconnect", s => {
     delete users[socket.id];
-    socket.emit(EVENTS.DISCONNECTED, socket.id);
     socket.broadcast.emit(EVENTS.DISCONNECTED, socket.id);
   });
 
@@ -47,7 +46,7 @@ io.on("connection", socket => {
     users[socket.id].username = username;
 
     // Inform everyone about connection of user
-    socket.broadcast.emit(EVENTS.USER_JOIN, username);
+    socket.broadcast.emit(EVENTS.USER_JOIN, socket.id);
   });
 
   // Store move and broadcast to other clients

@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { addParticipant } from "./index";
+import { addParticipant, removeParticipant } from "./index";
 
 const SOCKET_SERVER = {
   PORT: 3000,
@@ -55,13 +55,14 @@ export default class MessageHandler {
     this.send("MESSAGE", "Hello world");
     this.send("USER_JOIN", "my name");
   }
-  _socketUserJoinedHandler() {
-    console.log("new user join");
-    addParticipant();
+  _socketUserJoinedHandler(socketId) {
+    console.log("new user join", socketId);
+    addParticipant(socketId);
   }
 
-  _socketCloseHandler() {
-    console.log("Socket has been closed");
+  _socketCloseHandler(socketId) {
+    console.log("Socket has been closed", socketId);
+    removeParticipant(socketId);
   }
 
   _socketErrorHandler(error) {
