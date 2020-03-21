@@ -122,9 +122,11 @@ export const addParticipant = user => {
     color: "#FF0000"
   });
   updateScreen();
+  document.getElementById('beep').play();
 };
 
 let selectedIndex = -1;
+
 canvas.addEventListener("mousedown", mouseDown);
 canvas.addEventListener("mouseup", mouseUp);
 canvas.addEventListener("mousemove", mouseMove);
