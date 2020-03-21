@@ -4,22 +4,33 @@ const io = require("socket.io")(3000, {
   cookie: "coronachat"
 });
 
-const users = {};
+const users = [];
 
 const EVENTS = {
   CONNECTED: "CONNECTED",
   DISCONNECTED: "DISCONNECTED",
   USER_JOIN: "USER_JOIN",
+  USER_ADD: "USER_ADD",
   MOVE: "MOVE",
   MESSAGE: "MESSAGE",
   RTC_SIGNAL: "RTC-SIGNAL"
 };
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 io.on("connection", socket => {
+  Object.values(users).forEach(element => {
+      socket.broadcast.emit(EVENTS.USER_ADD, {name: element.name, position: element.position, socketid: socket.id });
+    });
+
+  
   // Store user socket and world position in memory
   users[socket.id] = {
-    socket,
-    position: {}
+    socket: socket,
+    position: {x: getRandomInt(500), y: getRandomInt(500)},
+    name: "qwerty" + getRandomInt(500)
   };
 
   // Inform user privately that they are connected
@@ -43,11 +54,12 @@ io.on("connection", socket => {
 
   // Handle user sending join message with his username
   socket.on(EVENTS.USER_JOIN, username => {
-    users[socket.id].username = username;
+    users[socket.id].name = username;
 
     // Inform everyone about connection of user
     socket.emit(EVENTS.CONNECTED, username);
     socket.broadcast.emit(EVENTS.CONNECTED, username);
+    socket.broadcast.emit(EVENTS.USER_ADD, users[socket.id]);
   });
 
   // Store move and broadcast to other clients

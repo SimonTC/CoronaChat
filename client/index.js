@@ -113,6 +113,12 @@ let participants = [
   }
 ];
 
+export const addParticipant = user => {
+  console.log("add user: " + user.name)
+  participants.push({name: user.name, posx: user.position.x, posy: user.position.y, width:20, height: 20, color:"#FF0000"});
+  updateScreen();
+};
+
 let selectedIndex = -1;
 canvas.addEventListener("mousedown", mouseDown);
 canvas.addEventListener("mouseup", mouseUp);
