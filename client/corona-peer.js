@@ -26,7 +26,7 @@ export default class CoronaPeer {
       console.log("Received message ", message);
     });
 
-    // messageHandler.send("USER_JOIN", `User${~~(Math.random() * 1000)}`);
+    messageHandler.send("USER_JOIN", `User${~~(Math.random() * 1000)}`);
 
     return messageHandler;
   }
