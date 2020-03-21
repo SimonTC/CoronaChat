@@ -57,6 +57,7 @@ io.on("connection", socket => {
 
   // Broadcast msg to other clients
   socket.on(EVENTS.MESSAGE, msg => {
+    console.log(msg);
     socket.broadcast.emit(EVENTS.MESSAGE, msg);
   });
 });

@@ -1,26 +1,33 @@
 import io from "socket.io-client";
 
+const SOCKET_SERVER = {
+  PORT: 3000,
+  PATH: "/chat"
+};
 export default class MessageHandler {
   constructor(peer) {
     this.peer = peer;
     this.socket = this._initializeSocket();
   }
 
-  send(payload) {
-    this.socket.send(JSON.stringify(payload));
+  send(type, payload) {
+    this.socket.emit(type, payload);
+  }
+
+  get SOCKET_SERVER() {
+    return window.location.protocol + "//" + window.location.hostname + ":" + SOCKET_SERVER.PORT;
   }
 
   _initializeSocket() {
     // const socket = new WebSocket(`ws://localhost:3000`);
-    const socket = io("http://localhost:3000", {
-      // port: 3000,
-      path: "/chat"
+    const socket = io(this.SOCKET_SERVER, {
+      path: SOCKET_SERVER.PATH
     });
 
-    // socket.addEventListener('message', this._socketMessageHandler.bind(this));
-    // socket.addEventListener('open', this._socketOpenHandler.bind(this));
-    // socket.addEventListener('close', this._socketCloseHandler.bind(this));
-    // socket.addEventListener('error', this._socketErrorHandler.bind(this));
+    socket.addEventListener("MESSAGE", this._socketMessageHandler.bind(this));
+    socket.addEventListener("CONNECTED", this._socketOpenHandler.bind(this));
+    socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
+    socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
 
     return socket;
   }
@@ -36,7 +43,6 @@ export default class MessageHandler {
         default:
           console.log("Other message received ", message.data);
       }
-
     } catch (error) {
       console.error(`Failed to parse incoming message ${message}`);
     }
@@ -44,6 +50,7 @@ export default class MessageHandler {
 
   _socketOpenHandler() {
     console.log("Connected to the signaling server");
+    this.send("MESSAGE", "Hello world");
   }
 
   _socketCloseHandler() {
