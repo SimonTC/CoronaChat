@@ -34,7 +34,8 @@ export default class CoronaPeer {
   _getPeer() {
     const peer = new Peer({
       initiator: this.initiator,
-      stream: this.mediaStream
+      stream: this.mediaStream,
+      config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'turn:turn01.hubl.in?transport=udp' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] }
     });
 
     // Called when a message is received from the server.
