@@ -1,15 +1,21 @@
-/*const config = require("../config/index.json");
+import { socketServerPort } from "../config/index.json";
+import CoronaPeer from "./corona-peer";
 
-const ws = new WebSocket(`ws://localhost:${config.socketServerPort}`);
+const socket = new WebSocket(`ws://localhost:${socketServerPort}`);
 
-ws.onopen = () => {
-  console.log('Connected to the signaling server');
-}
+const isInitiator = location.hash === "#1";
 
-ws.onerror = err => {
-  console.error(err)
-}
-*/
+navigator.mediaDevices
+  .getUserMedia({
+    video: false,
+    audio: true
+  })
+  .then(mediaStream => {
+    const peer = new CoronaPeer(socket, isInitiator, mediaStream);
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
