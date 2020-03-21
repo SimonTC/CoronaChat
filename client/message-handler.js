@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { addParticipant, removeParticipant } from "..client/index";
+import { addParticipant, removeParticipant } from "./index";
 
 const SOCKET_SERVER = {
   PORT: 3000,
