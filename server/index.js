@@ -1,10 +1,10 @@
 // Server setup
-const server = require("http").createServer(req => {});
-server.listen(3000, () => {
-  console.log("Listening on 3000");
-});
+// const server = require("http").createServer(req => {});
+// server.listen(3000, () => {
+//   console.log("Listening on 3000");
+// });
 
-const io = require("socket.io")(server, {
+const io = require("socket.io")(3000, {
   path: "/chat",
   serveClient: false,
   cookie: "coronachat"
