@@ -1,5 +1,6 @@
 import CoronaPeer from "./corona-peer";
 
+// TODO: We should determine whether client is initiator or not through websockets
 const isInitiator = location.hash === "#1";
 
 navigator.mediaDevices
@@ -13,6 +14,8 @@ navigator.mediaDevices
   .catch(error => {
     console.error(error);
   });
+
+
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
