@@ -23,7 +23,7 @@ io.on("connection", socket => {
 
   // Inform user privately that they are connected
   // Client should send a USER_JOIN message back with their username
-  socket.emit(EVENTS.CONNECTED, "connection established");
+  socket.emit(EVENTS.CONNECTED, socket.id);
   // socket.emit(EVENTS.USER_JOIN, "user joined");
 
   // Handle event when user is about to disconnect (for possible cleanups)
@@ -50,9 +50,10 @@ io.on("connection", socket => {
   });
 
   // Store move and broadcast to other clients
-  socket.on(EVENTS.MOVE, pos => {
-    users[socket.id].position = pos;
-    socket.broadcast.emit(EVENTS.MOVE, socket.id, pos);
+  socket.on(EVENTS.MOVE, user => {
+    console.log("move server", user);
+    users[socket.id].position = { posx: user.posx, posy: user.posy };
+    socket.broadcast.emit(EVENTS.MOVE, user);
   });
 
   // Broadcast msg to other clients

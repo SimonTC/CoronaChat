@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { addParticipant, removeParticipant } from "./index";
+import { addParticipant, removeParticipant, updateCurrentParticipant } from "./index";
 
 const SOCKET_SERVER = {
   PORT: 3000,
@@ -12,6 +12,7 @@ export default class MessageHandler {
   }
 
   send(type, payload) {
+    console.log("type", type);
     this.socket.emit(type, payload);
   }
 
@@ -30,6 +31,7 @@ export default class MessageHandler {
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
     socket.addEventListener("USER_JOIN", this._socketUserJoinedHandler.bind(this));
+    socket.addEventListener("MOVE", this._socketMoveHandler(this));
 
     return socket;
   }
@@ -50,8 +52,9 @@ export default class MessageHandler {
     }
   }
 
-  _socketOpenHandler(d) {
-    console.log("Connected to the signaling server", "-", d);
+  _socketOpenHandler(socketId) {
+    console.log("Connected to the signaling server", "-", socketId);
+    updateCurrentParticipant(socketId);
     this.send("MESSAGE", "Hello world");
     this.send("USER_JOIN", "my name");
   }
@@ -65,7 +68,14 @@ export default class MessageHandler {
     removeParticipant(socketId);
   }
 
+  _socketMoveHandler(user) {
+    console.log("moving", user);
+  }
+
   _socketErrorHandler(error) {
     console.error(error);
+  }
+  sendNewMousePosition() {
+    console.log("moving");
   }
 }
