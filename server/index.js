@@ -22,7 +22,9 @@ function getRandomInt(max) {
 
 io.on("connection", socket => {
   Object.values(users).forEach(element => {
-      socket.broadcast.emit(EVENTS.USER_ADD, {name: element.name, position: element.position, socketid: socket.id });
+      var user = {name: element.name, position: element.position, socketid: socket.id }
+      socket.broadcast.emit(EVENTS.USER_ADD, user);
+      socket.emit(EVENTS.USER_ADD, user)
     });
 
   
