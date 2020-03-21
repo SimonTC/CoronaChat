@@ -8,23 +8,23 @@ const socketServer = new ws.Server({
 
 const connectedSockets = [];
 
-socketServer.on('connection', _onConnectionEstablished);
-socketServer.on('error', _onConnectionError);
+socketServer.on("connection", _onConnectionEstablished);
+socketServer.on("error", _onConnectionError);
 
 function _onConnectionEstablished(socket) {
-  console.info('Client has connected.');
+  console.info("Client has connected.");
 
   if (connectedSockets.length < config.maxConnections) {
-    socket.on('move', (message) => {
+    socket.on("move", message => {
       // TODO: Handle person move
     });
 
-    socket.on('error', _closeConnection);
-    socket.on('close', _closeConnection);
+    socket.on("error", _closeConnection);
+    socket.on("close", _closeConnection);
 
     connectedSockets.push(socket);
   } else {
-    console.info('Server is full');
+    console.info("Server is full");
 
     socket.close();
   }

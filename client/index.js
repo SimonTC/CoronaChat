@@ -22,12 +22,7 @@ function getMousePos(event) {
   };
 }
 function isInside(pos, p) {
-  return (
-    pos.x > p.posx &&
-    pos.x < p.posx + p.width &&
-    p.posy < p.posy + p.height &&
-    pos.y > p.posy
-  );
+  return pos.x > p.posx && pos.x < p.posx + p.width && p.posy < p.posy + p.height && pos.y > p.posy;
 }
 
 function clearCanvas() {
@@ -40,23 +35,11 @@ function drawParticipant(p, index, self) {
   ctx.fillRect(p.posx, p.posy, p.width, p.height);
   ctx.font = "30px Arial";
   ctx.fillText(p.name, p.posx, p.posy);
-  const closestConversation = calculateDistanceBetweenParticipants(
-    p,
-    index,
-    self
-  );
-  ctx.fillText(
-    `closest convo: ${closestConversation}`,
-    p.posx + 30,
-    p.posy + 30
-  );
+  const closestConversation = calculateDistanceBetweenParticipants(p, index, self);
+  ctx.fillText(`closest convo: ${closestConversation}`, p.posx + 30, p.posy + 30);
 }
 
-function calculateDistanceBetweenParticipants(
-  p,
-  currentParticipant,
-  participants
-) {
+function calculateDistanceBetweenParticipants(p, currentParticipant, participants) {
   const currentPosition = { x: p.posx, y: p.posy };
   let closestDistance = 5000;
   participants.forEach((particpant, index) => {
@@ -68,9 +51,7 @@ function calculateDistanceBetweenParticipants(
         )
       );
       closestDistance =
-        distanceBetweenParticpants < closestDistance
-          ? distanceBetweenParticpants
-          : closestDistance;
+        distanceBetweenParticpants < closestDistance ? distanceBetweenParticpants : closestDistance;
     }
   });
   if (closestDistance === 5000) {
