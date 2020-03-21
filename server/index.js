@@ -4,7 +4,7 @@ const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 
 const clientDirectory = path.join(__dirname, "../dist");
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const serve = serveStatic(clientDirectory);
 
