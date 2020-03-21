@@ -15,13 +15,13 @@ export default class CoronaPeer {
     
     messageHandler.on("RTC-SIGNAL", signal => this.peer.signal(signal));
 
-    // messageHandler.on("CONNECTED", () => {
-    //   messageHandler.send("MESSAGE", "Hello world");
-    // })
+    messageHandler.on("CONNECTED", () => {
+      messageHandler.send("MESSAGE", "Hello world");
+    })
     
-    // messageHandler.on("MESSAGE", message => {
-    //   console.log("Received message ", message);
-    // });
+    messageHandler.on("MESSAGE", message => {
+      console.log("Received message ", message);
+    });
     
     // messageHandler.send("USER_JOIN", `User${~~(Math.random() * 1000)}`);
 
