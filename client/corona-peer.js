@@ -14,7 +14,7 @@ export default class CoronaPeer {
     const messageHandler = new MessageHandler();
 
     messageHandler.on("RTC-SIGNAL", signal => {
-      console.log("RTC-Signal: ", signal);
+      console.log("Received RTC-Signal: ", signal);
       this.peer.signal(signal);
     });
 

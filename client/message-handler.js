@@ -20,6 +20,7 @@ export default class MessageHandler {
   }
 
   send(type, payload) {
+    console.log(`Sending message of ${type} `, payload)
     this.socket.emit(type, payload);
   }
 
