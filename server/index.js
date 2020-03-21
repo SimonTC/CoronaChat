@@ -1,9 +1,24 @@
+const path = require("path");
+const http = require('http');
+const finalhandler = require('finalhandler');
+const serveStatic = require('serve-static');
 
-const port = 3000;
+const clientDirectory = path.join(__dirname, "../dist");
+const port = process.env.PORT || 3000;
+
+const serve = serveStatic(clientDirectory);
+
+const server = http.createServer((req, res) => {
+  const done = finalhandler(req, res);
+
+  serve(req, res, done);
+});
+
+server.listen(port);
 
 console.log("Server running on port ", port)
 
-const io = require("socket.io")(port, {
+const io = require("socket.io")(server, {
   path: "/chat",
   serveClient: false,
   cookie: "coronachat"

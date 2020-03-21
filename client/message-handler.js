@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 console.log("Accessing server on port ", port)
 
@@ -24,7 +24,8 @@ export default class MessageHandler {
   }
 
   get SOCKET_SERVER() {
-    return `${window.location.protocol}//${window.location.hostname}:${SOCKET_SERVER.PORT}`;
+    return `${window.location.protocol}//${window.location.hostname}`;
+    // return `${window.location.protocol}//${window.location.hostname}:${SOCKET_SERVER.PORT}`;
   }
 
   _initializeSocket() {
