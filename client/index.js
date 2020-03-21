@@ -114,15 +114,21 @@ let participants = [
 export const addParticipant = user => {
   console.log("add user: " + user.name);
   participants.push({
-    name: user.name,
-    posx: user.position.x,
-    posy: user.position.y,
+    id: user.socketId,
+    name: `guest - ${participants.length}`,
+    posx: 20 * participants.length,
+    posy: 20 * participants.length,
     width: 20,
     height: 20,
     color: "#FF0000"
   });
   updateScreen();
   document.getElementById("beep").play();
+};
+
+export const removeParticipant = socketId => {
+  participants = participants.filter(particpant => particpant.id !== socketId);
+  updateScreen();
 };
 
 let selectedIndex = -1;

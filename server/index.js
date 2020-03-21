@@ -47,7 +47,6 @@ io.on("connection", socket => {
   // Handle disconnection of client
   socket.on("disconnect", s => {
     delete users[socket.id];
-    socket.emit(EVENTS.DISCONNECTED, socket.id);
     socket.broadcast.emit(EVENTS.DISCONNECTED, socket.id);
   });
 
