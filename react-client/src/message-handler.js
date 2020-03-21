@@ -28,11 +28,6 @@ export default class MessageHandler {
     const socket = io(this.SOCKET_SERVER, {
       path: SOCKET_SERVER.PATH
     });
-
-    socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
-    socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
-    socket.addEventListener("RTC-SIGNAL", this._socketSignalHandler.bind(this));
-    socket.addEventListener("USER_ADD", addParticipant);
     return socket;
   }
 

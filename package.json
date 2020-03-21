@@ -5,8 +5,11 @@
   "main": "server/index.js",
   "scripts": {
     "start": "npm-run-all --parallel start-client start-server",
+    "start-react": "npm-run-all --parallel start-react-client start-server",
     "build-client": "parcel build client/index.html",
     "start-client": "parcel client/index.html",
+    "build-react-client": "parcel build react-client/public/index.html",
+    "start-react-client": "parcel react-client/public/index.html",
     "start-server": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

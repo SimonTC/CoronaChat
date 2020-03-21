@@ -1,4 +1,5 @@
 import MessageHandler from "./message-handler";
+import { addParticipant } from "./state/participants";
 
 const Peer = require("simple-peer");
 
@@ -23,7 +24,9 @@ export default class CoronaPeer {
       console.log("Received message ", message);
     });
 
-    // messageHandler.send("USER_JOIN", `User${~~(Math.random() * 1000)}`);
+    messageHandler.on("DISCONNECTED", () => console.warn("Socket disconnected"));
+    messageHandler.on("ERROR", e => console.error("Socket error: " + e));
+    messageHandler.on("USER_ADD", addParticipant);
 
     return messageHandler;
   }

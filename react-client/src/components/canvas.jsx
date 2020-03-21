@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import CoronaPeer from "../corona-peer";
 
 class Canvas extends Component {
-
   constructor(props) {
     super(props);
     this.canvasRef = React.createRef();
     this.state = {
       participants: this.props.participants,
       selectedIndex: -1
-    }
+    };
+    this.peer = null;
   }
 
   componentDidMount() {
@@ -17,9 +17,9 @@ class Canvas extends Component {
 
     const canvas = this.canvasRef.current;
 
-    canvas.addEventListener("mousedown", this.mouseDown);
-    canvas.addEventListener("mouseup", this.mouseUp);
-    canvas.addEventListener("mousemove", this.mouseMove);
+    canvas.addEventListener("mousedown", this.mouseDown.bind(this));
+    canvas.addEventListener("mouseup", this.mouseUp.bind(this));
+    canvas.addEventListener("mousemove", this.mouseMove.bind(this));
 
     this.updateCanvas();
   }
@@ -33,7 +33,7 @@ class Canvas extends Component {
         audio: true
       })
       .then(mediaStream => {
-        const peer = new CoronaPeer(isInitiator, mediaStream);
+        this.peer = new CoronaPeer(isInitiator, mediaStream);
       })
       .catch(error => {
         console.error(error);
@@ -47,13 +47,16 @@ class Canvas extends Component {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    this.state.participants.forEach(this.drawParticipant);
+    this.state.participants.forEach(this.drawParticipant.bind(this));
   }
 
   render() {
     return (
       <div>
-        <canvas ref={this.canvasRef} width={1000} height={700}/>
+        <canvas ref={this.canvasRef} width={1000} height={700} />
+        <div className="audio-wrapper">
+          <audio></audio>
+        </div>
       </div>
     );
   }
@@ -72,7 +75,7 @@ class Canvas extends Component {
     );
   }
 
-  drawParticipant = (p, index, self) => {
+  drawParticipant(p, index, self) {
     const ctx = this.canvasRef.current.getContext("2d");
     ctx.fillStyle = p.color;
     ctx.fillRect(p.posx, p.posy, p.width, p.height);
@@ -105,20 +108,20 @@ class Canvas extends Component {
     return closestDistance;
   }
 
-  mouseDown = (evt) => {
+  mouseDown(evt) {
     let mousePos = this.getMousePos(evt);
     if (this.isInside(mousePos, this.state.participants[0])) {
-      this.setState( {selectedIndex: 0});
+      this.setState({ selectedIndex: 0 });
       console.log("mouse down " + this.state.participants[this.state.selectedIndex].name);
     }
   }
 
-  mouseUp = (evt) => {
+  mouseUp(evt) {
     console.log("mouse up");
-    this.setState( {selectedIndex: -1});
+    this.setState({ selectedIndex: -1 });
   }
 
-  mouseMove = (evt) => {
+  mouseMove(evt) {
     const rect = this.canvasRef.current.getBoundingClientRect();
     if (this.state.selectedIndex >= 0) {
       console.log("mouse move");
