@@ -3,31 +3,13 @@ import CoronaPeer from "../corona-peer";
 
 class Canvas extends Component {
 
-  state = {
-    participants: [
-      {
-        name: "player",
-        posx: 20,
-        posy: 20,
-        width: 20,
-        height: 20,
-        color: "#0000ff"
-      },
-      {
-        name: "guest",
-        posx: 200,
-        posy: 200,
-        width: 20,
-        height: 20,
-        color: "#FF0000"
-      }
-    ],
-    selectedIndex: -1
-  };
-
   constructor(props) {
     super(props);
     this.canvasRef = React.createRef();
+    this.state = {
+      participants: this.props.participants,
+      selectedIndex: -1
+    }
   }
 
   componentDidMount() {
@@ -36,6 +18,7 @@ class Canvas extends Component {
     canvas.addEventListener("mousedown", this.mouseDown);
     canvas.addEventListener("mouseup", this.mouseUp);
     canvas.addEventListener("mousemove", this.mouseMove);
+    
 
     this.updateCanvas();
   }

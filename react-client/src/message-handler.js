@@ -1,13 +1,19 @@
 import io from "socket.io-client";
+import { addParticipant, removeParticipant } from "./state/participants.js";
 
 const SOCKET_SERVER = {
   PORT: 3000,
   PATH: "/chat"
 };
+
 export default class MessageHandler {
-  constructor(peer) {
-    this.peer = peer;
+  constructor() {
+    this._handlers = [];
     this.socket = this._initializeSocket();
+  }
+
+  on(eventType, handler) {
+    this.socket.addEventListener(eventType, handler);
   }
 
   send(type, payload) {
@@ -15,21 +21,18 @@ export default class MessageHandler {
   }
 
   get SOCKET_SERVER() {
-    return window.location.protocol + "//" + window.location.hostname + ":" + SOCKET_SERVER.PORT;
+    return `${window.location.protocol}//${window.location.hostname}:${SOCKET_SERVER.PORT}`;
   }
 
   _initializeSocket() {
-    // const socket = new WebSocket(`ws://localhost:3000`);
     const socket = io(this.SOCKET_SERVER, {
       path: SOCKET_SERVER.PATH
     });
 
-    socket.addEventListener("MESSAGE", this._socketMessageHandler.bind(this));
-    socket.addEventListener("CONNECTED", this._socketOpenHandler.bind(this));
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
     socket.addEventListener("RTC-SIGNAL", this._socketSignalHandler.bind(this));
-
+    socket.addEventListener("USER_ADD", addParticipant);
     return socket;
   }
 
@@ -38,7 +41,7 @@ export default class MessageHandler {
   }
 
   _socketMessageHandler(message) {
-    console.log("Received message ", message.data);
+    console.log("Received message ", message);
   }
 
   _socketOpenHandler() {
