@@ -15,8 +15,6 @@ navigator.mediaDevices
     console.error(error);
   });
 
-
-
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const rect = canvas.getBoundingClientRect();
@@ -114,8 +112,15 @@ let participants = [
 ];
 
 export const addParticipant = user => {
-  console.log("add user: " + user.name)
-  participants.push({name: user.name, posx: user.position.x, posy: user.position.y, width:20, height: 20, color:"#FF0000"});
+  console.log("add user: " + user.name);
+  participants.push({
+    name: user.name,
+    posx: user.position.x,
+    posy: user.position.y,
+    width: 20,
+    height: 20,
+    color: "#FF0000"
+  });
   updateScreen();
 };
 
