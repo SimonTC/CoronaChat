@@ -13,6 +13,12 @@ socketServer.on("error", _onConnectionError);
 
 function _onConnectionEstablished(socket) {
   console.info("Client has connected.");
+  socketServer.clients.forEach(client => {
+    if (client !== socket && client.readyState === socket.OPEN) {
+      client.send("new user join");
+    }
+  });
+  // })
 
   if (connectedSockets.length < config.maxConnections) {
     socket.on("move", message => {
@@ -25,7 +31,6 @@ function _onConnectionEstablished(socket) {
     connectedSockets.push(socket);
   } else {
     console.info("Server is full");
-
     socket.close();
   }
 }

@@ -1,15 +1,18 @@
-/*const config = require("../config/index.json");
+const config = require("../config/index.json");
 
 const ws = new WebSocket(`ws://localhost:${config.socketServerPort}`);
 
 ws.onopen = () => {
-  console.log('Connected to the signaling server');
-}
+  console.log("Connected to the signaling server");
+};
+
+ws.onmessage = d => {
+  console.log("new user joined", d);
+};
 
 ws.onerror = err => {
-  console.error(err)
-}
-*/
+  console.error(err);
+};
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
