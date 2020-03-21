@@ -33,7 +33,7 @@ export default class MessageHandler {
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
     socket.addEventListener("RTC-SIGNAL", this._socketSignalHandler.bind(this));
-    socket.addEventListener("USER_ADD", addParticipant);
+    socket.addEventListener("USER_ADD", this._handleAddUser.bind(this));
     socket.addEventListener("MOVE", this._socketMoveHandler(this));
 
     return socket;
@@ -57,9 +57,9 @@ export default class MessageHandler {
     this.send("MESSAGE", "Hello world");
     this.send("USER_JOIN", "my name");
   }
-  _socketUserJoinedHandler(socketId) {
-    console.log("new user join", socketId);
-    addParticipant(socketId);
+
+  _handleAddUser(user) {
+    addParticipant(user);
   }
 
   _socketCloseHandler(socketId) {

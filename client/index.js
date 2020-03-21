@@ -118,9 +118,9 @@ export const updateCurrentParticipant = socketId => {
   participants[0].id = socketId;
 };
 export const addParticipant = user => {
-  console.log("add user: " + user.name);
+  console.log("add user: " + user.socketid);
   participants.push({
-    id: user.socketId,
+    id: user.socketid,
     name: `guest - ${participants.length}`,
     posx: 20 * participants.length,
     posy: 20 * participants.length,
@@ -129,7 +129,7 @@ export const addParticipant = user => {
     color: "#FF0000"
   });
   updateScreen();
-  document.getElementById("beep").play();
+  // document.getElementById("beep").play();
 };
 
 export const removeParticipant = socketId => {
