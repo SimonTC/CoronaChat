@@ -110,6 +110,19 @@ let participants = [
   }
 ];
 
+export const addParticipant = () => {
+  const newParticipant = {
+    name: `guest - ${participants.length}`,
+    posx: 20 * participants.length,
+    posy: 20 * participants.length,
+    width: 20,
+    height: 20,
+    color: "#0000ff"
+  };
+  participants = [...participants, newParticipant];
+  updateScreen();
+};
+
 let selectedIndex = -1;
 canvas.addEventListener("mousedown", mouseDown);
 canvas.addEventListener("mouseup", mouseUp);

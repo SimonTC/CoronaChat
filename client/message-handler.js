@@ -1,4 +1,5 @@
 import io from "socket.io-client";
+import { addParticipant } from "./index";
 
 const SOCKET_SERVER = {
   PORT: 3000,
@@ -28,6 +29,7 @@ export default class MessageHandler {
     socket.addEventListener("CONNECTED", this._socketOpenHandler.bind(this));
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
+    socket.addEventListener("USER_JOIN", this._socketUserJoinedHandler.bind(this));
 
     return socket;
   }
@@ -48,9 +50,14 @@ export default class MessageHandler {
     }
   }
 
-  _socketOpenHandler() {
-    console.log("Connected to the signaling server");
+  _socketOpenHandler(d) {
+    console.log("Connected to the signaling server", "-", d);
     this.send("MESSAGE", "Hello world");
+    this.send("USER_JOIN", "my name");
+  }
+  _socketUserJoinedHandler() {
+    console.log("new user join");
+    addParticipant();
   }
 
   _socketCloseHandler() {

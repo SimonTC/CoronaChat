@@ -24,6 +24,7 @@ io.on("connection", socket => {
   // Inform user privately that they are connected
   // Client should send a USER_JOIN message back with their username
   socket.emit(EVENTS.CONNECTED, "connection established");
+  // socket.emit(EVENTS.USER_JOIN, "user joined");
 
   // Handle event when user is about to disconnect (for possible cleanups)
   socket.on("disconnecting", s => {
@@ -42,11 +43,11 @@ io.on("connection", socket => {
 
   // Handle user sending join message with his username
   socket.on(EVENTS.USER_JOIN, username => {
+    console.log("join", username);
     users[socket.id].username = username;
 
     // Inform everyone about connection of user
-    socket.emit(EVENTS.CONNECTED, username);
-    socket.broadcast.emit(EVENTS.CONNECTED, username);
+    socket.broadcast.emit(EVENTS.USER_JOIN, username);
   });
 
   // Store move and broadcast to other clients
