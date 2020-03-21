@@ -1,15 +1,18 @@
 import CoronaPeer from "./corona-peer";
+import MessageHandler from "./message-handler";
 
 // TODO: We should determine whether client is initiator or not through websockets
 const isInitiator = location.hash === "#1";
-
+// let messageHandler;
+let peer;
 navigator.mediaDevices
   .getUserMedia({
     video: false,
     audio: true
   })
   .then(mediaStream => {
-    const peer = new CoronaPeer(isInitiator, mediaStream);
+    peer = new CoronaPeer(isInitiator, mediaStream);
+    // messageHandler = new MessageHandler(peer);
   })
   .catch(error => {
     console.error(error);
@@ -87,6 +90,7 @@ function mouseMove(evt) {
     console.log("mouse move");
     participants[selectedIndex].posx = evt.clientX - rect.left;
     participants[selectedIndex].posy = evt.clientY - rect.top;
+    peer.messageHandler.send("MOVE", participants[selectedIndex]);
     updateScreen();
   }
 }
@@ -110,19 +114,27 @@ let participants = [
     color: "#FF0000"
   }
 ];
-
+export const updateCurrentParticipant = socketId => {
+  participants[0].id = socketId;
+};
 export const addParticipant = user => {
-  console.log("add user: " + user.name);
+  console.log("add user: " + user.socketid);
   participants.push({
-    name: user.name,
-    posx: user.position.x,
-    posy: user.position.y,
+    id: user.socketid,
+    name: `guest - ${participants.length}`,
+    posx: 20 * participants.length,
+    posy: 20 * participants.length,
     width: 20,
     height: 20,
     color: "#FF0000"
   });
   updateScreen();
-  document.getElementById('beep').play();
+  // document.getElementById("beep").play();
+};
+
+export const removeParticipant = socketId => {
+  participants = participants.filter(particpant => particpant.id !== socketId);
+  updateScreen();
 };
 
 let selectedIndex = -1;
