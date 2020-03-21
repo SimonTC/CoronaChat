@@ -86,7 +86,7 @@ class Canvas extends Component {
     );
   }
 
-  drawParticipant(p, index, self) {
+  drawParticipant = (p, index, self) => {
     const ctx = this.canvasRef.current.getContext("2d");
     ctx.fillRect(p.posx, p.posy, p.width, p.height);
     ctx.fillStyle = p.color;
@@ -119,7 +119,7 @@ class Canvas extends Component {
     return closestDistance;
   }
 
-  mouseDown(evt) {
+  mouseDown = (evt) => {
     let mousePos = this.getMousePos(evt);
     if (this.isInside(mousePos, this.state.participants[0])) {
       this.setState( {selectedIndex: 0});
@@ -127,12 +127,12 @@ class Canvas extends Component {
     }
   }
 
-  mouseUp(evt) {
+  mouseUp = (evt) => {
     console.log("mouse up");
     this.setState( {selectedIndex: -1});
   }
 
-  mouseMove(evt) {
+  mouseMove = (evt) => {
     const rect = this.canvasRef.current.getBoundingClientRect();
     if (this.state.selectedIndex >= 0) {
       console.log("mouse move");
