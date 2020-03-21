@@ -40,6 +40,10 @@ export default class MessageHandler {
     this.peer.signal(signal);
   }
 
+  _socketCloseHandler(socketId) {
+    console.log(`Client '${socketId}' has been disconnected.`);
+  }
+
   _socketMessageHandler(message) {
     console.log("Received message ", message);
   }
