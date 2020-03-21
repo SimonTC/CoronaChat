@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { addParticipant, removeParticipant } from "./index";
+import { addParticipant, removeParticipant } from "..client/index";
 
 const SOCKET_SERVER = {
   PORT: 3000,
@@ -31,12 +31,8 @@ export default class MessageHandler {
 
     socket.addEventListener("DISCONNECTED", this._socketCloseHandler.bind(this));
     socket.addEventListener("ERROR", this._socketErrorHandler.bind(this));
-<<<<<<< Updated upstream
-
-=======
     socket.addEventListener("RTC-SIGNAL", this._socketSignalHandler.bind(this));
     socket.addEventListener("USER_ADD", addParticipant);
->>>>>>> Stashed changes
     return socket;
   }
 
@@ -44,10 +40,6 @@ export default class MessageHandler {
     this.peer.signal(signal);
   }
 
-<<<<<<< Updated upstream
-  _socketCloseHandler(socketId) {
-    console.log(`Client '${socketId}' has been disconnected.`);
-=======
   _socketMessageHandler(message) {
     console.log("Received message ", message);
   }
@@ -59,7 +51,6 @@ export default class MessageHandler {
 
   _socketCloseHandler() {
     console.log("Socket has been closed");
->>>>>>> Stashed changes
   }
 
   _socketErrorHandler(error) {
