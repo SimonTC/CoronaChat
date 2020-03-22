@@ -5,6 +5,7 @@ export default class PeerController {
   #socketId: string;
   #position: Point;
   #isOwner: boolean;
+  #mood: string
 
   constructor(options: {
     name: string,
@@ -16,6 +17,7 @@ export default class PeerController {
     this.#socketId = options.socketId;
     this.#position = options.position;
     this.#isOwner = options.isOwner;
+    this.#mood = "neutral";
   }
 
   get isInstantiated() {
@@ -41,5 +43,14 @@ export default class PeerController {
   set position(point: Point) {
     this.#position.x = point.x;
     this.#position.y = point.y;
+  }
+
+  get mood() {
+    return this.#mood;
+  }
+
+  set mood(mood) {
+    if(this.#isOwner)
+      this.#mood = mood;
   }
 }

@@ -32,7 +32,7 @@ export default class Room {
 
     for (const socketId in this.#peerControllers) {
       if (this.#peerControllers[socketId].isInstantiated) {
-        drawPeerCell(this.#context, this.#peerControllers[socketId].name, this.#peerControllers[socketId].position, this.#peerControllers[socketId].isOwner, CELL_RADIUS);
+        drawPeerCell(this.#context, this.#peerControllers[socketId].name, this.#peerControllers[socketId].position, this.#peerControllers[socketId].isOwner, this.#peerControllers[socketId].mood, CELL_RADIUS);
       }
     }
   }
@@ -110,6 +110,12 @@ export default class Room {
     selectmood.addEventListener("change", event => {
       //console.log("name: " + event.target.value + ", value: ")
       selectmood.style.visibility = "hidden"
+      Object.values(this.#peerControllers).forEach(element => {
+        if(element.isOwner) {
+            element.mood = event.target.value;
+            this.render();
+        }
+      });
     });
 
     this.#canvas.addEventListener("contextmenu", event => {
