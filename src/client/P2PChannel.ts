@@ -1,6 +1,6 @@
 import SocketHandler from "./SocketHandler";
 import P2PMediaStream from "./P2PMediaStream";
-import { IRemovePeer } from 'common/Messages';
+import { IRemovePeer } from '../common/Messages';
 
 const ICE_SERVERS: RTCIceServer[] = [{
   urls: [ "stun:stun.l.google.com:19302" ],
@@ -24,7 +24,9 @@ export default class P2PChannel {
   } = {};
 
   constructor(socketHandler: SocketHandler) {
-    this.#localMediaStream = new P2PMediaStream();
+    this.#localMediaStream = new P2PMediaStream({
+      muted: true
+    });
 
     this.#socketHandler = socketHandler;
 
@@ -38,7 +40,8 @@ export default class P2PChannel {
 
   private handleSocketConnected() {
     this.#localMediaStream
-      .setup()
+      .getUserMedia()
+      .then(stream => this.#localMediaStream.attachMediaElement(stream))
       .then(() => this.joinChannel(this.#defaultChannel));
   }
 
@@ -91,28 +94,23 @@ export default class P2PChannel {
       }
     }
   
-    // @ts-ignore
-    peerConnection.onaddstream = event => {
-      this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: true });
-      this.#peerMediaStreams[peerId].setup()
-        .then(() => {
-          if ("srcObject" in this.#peerMediaStreams[peerId].mediaElement) {
-            this.#peerMediaStreams[peerId].mediaElement.srcObject = event.stream;
-          } else {
-            (this.#peerMediaStreams[peerId].mediaElement as any).src = window.URL.createObjectURL(event.stream); // for older browsers
-          }
-        });
+    peerConnection.ontrack = (event: RTCTrackEvent) => {
+      if (!this.#peerMediaStreams[peerId]) {
+        this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: false });
+        this.#peerMediaStreams[peerId].attachMediaElement(event.streams[0]);
+      }
     }
 
-    // @ts-ignore
-    peerConnection.addStream(this.#localMediaStream.mediaStream);
+    for (const track of this.#localMediaStream.mediaStream.getTracks()) {
+      peerConnection.addTrack(track, this.#localMediaStream.mediaStream);
+    }
 
     if (shouldCreateOffer) {
         console.log(`Creating RTC offer to '${peerId}'`);
 
         peerConnection
           .createOffer()
-          .then(description => {
+          .then((description: RTCSessionDescriptionInit) => {
             console.log(`Local offer description is`, description);
 
             peerConnection
@@ -126,11 +124,11 @@ export default class P2PChannel {
 
                 console.log(`Setting offer description successful.`);
               })
-              .catch(error => {
+              .catch((error: Error) => {
                 console.log(`Failed to set offer description.`, error);
               })
           })
-          .catch(error => {
+          .catch((error: Error) => {
             console.log(`Error sending offer`, error);
           });
     }
