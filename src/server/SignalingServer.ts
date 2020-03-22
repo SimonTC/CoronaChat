@@ -5,7 +5,7 @@ import config from "common/config";
 import { P2PSocket } from "server/P2PSocket";
 import MessageHandler from "server/MessageHandler";
 import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell, IRemovePeer, IPing } from 'common/Messages';
-import PeerController from 'common/PeerController';
+import Peer from 'common/Peer';
 
 type P2PChannelCollection = {
   [channelName: string]: {
@@ -44,7 +44,7 @@ export default class SignalingServer {
   }
 
   private handleSpawnPeerCell(socket: P2PSocket, message: CSpawnPeerCell) {
-    const peerController = new PeerController({
+    const peerController = new Peer({
       name: message.name,
       socketId: socket.id,
       position: {
@@ -196,7 +196,7 @@ export default class SignalingServer {
 
     socket.on("error", (error) => this.handleSocketError(socket, error));
     socket.on("close", () => this.handleCloseConnection(socket));
-    
+
     this.startHeartbeat(socket);
 
     console.log(`Socket '${socket.id}' connection has been established.`);

@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import MessageHandler from "server/MessageHandler";
-import PeerController from 'common/PeerController';
+import Peer from 'common/Peer';
 
 export type P2PChannelCollection = {
   [key: string]: string
@@ -9,6 +9,6 @@ export type P2PChannelCollection = {
 export type P2PSocket = WebSocket & {
   id: string,
   messageHandler: MessageHandler,
-  peerController: PeerController,
+  peerController: Peer,
   channels: P2PChannelCollection
 };

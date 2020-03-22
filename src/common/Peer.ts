@@ -1,6 +1,6 @@
 import { Point } from './Structures';
 
-export default class PeerController {
+export default class Peer {
   #name: string;
   #socketId: string;
   #position: Point;
@@ -11,7 +11,7 @@ export default class PeerController {
     name: string,
     socketId: string,
     position: Point,
-    mood: string,
+    mood?: string,
     isOwner?: boolean
   }) {
     this.#name = options.name;

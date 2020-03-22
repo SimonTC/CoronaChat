@@ -26,7 +26,7 @@ export function drawPeerCell(context: CanvasRenderingContext2D, name: string, po
   context.fillStyle = "#eee";
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(name, position.x, position.y-10;
+  context.fillText(name, position.x, position.y - 10);
   context.font = "bold 14px sans-serif";
   context.fillStyle = 'cyan';
   context.fillText(mood, position.x, position.y+10);

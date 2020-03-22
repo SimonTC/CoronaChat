@@ -1,6 +1,7 @@
 import SocketHandler from "./SocketHandler";
 import P2PMediaStream from "./P2PMediaStream";
-import { IRemovePeer } from '../common/Messages';
+import { IRemovePeer } from "../common/Messages";
+import { EventEmitter } from "../common/EventEmitter";
 
 const ICE_SERVERS: RTCIceServer[] = [{
   urls: [ "stun:stun.l.google.com:19302" ],
@@ -10,7 +11,9 @@ const ICE_SERVERS: RTCIceServer[] = [{
   credential: "qwqwqw"
 }];
 
-export default class P2PChannel {
+type P2PChannelEventType = "connected" | "peerTrackAdded";
+
+export default class P2PChannel extends EventEmitter<P2PChannelEventType> {
   #defaultChannel = "corona";
   #socketHandler: SocketHandler;
 
@@ -24,6 +27,8 @@ export default class P2PChannel {
   } = {};
 
   constructor(socketHandler: SocketHandler) {
+    super();
+
     this.#localMediaStream = new P2PMediaStream({
       muted: true
     });
@@ -39,6 +44,8 @@ export default class P2PChannel {
   }
 
   private handleSocketConnected() {
+    this.fire("connected");
+
     this.#localMediaStream
       .getUserMedia()
       .then(stream => this.#localMediaStream.attachMediaElement(stream))
@@ -95,6 +102,11 @@ export default class P2PChannel {
     }
   
     peerConnection.ontrack = (event: RTCTrackEvent) => {
+      this.fire("peerTrackAdded", {
+        socketId: peerId,
+        streams: event.streams
+      });
+
       if (!this.#peerMediaStreams[peerId]) {
         this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: false });
         this.#peerMediaStreams[peerId].attachMediaElement(event.streams[0]);
