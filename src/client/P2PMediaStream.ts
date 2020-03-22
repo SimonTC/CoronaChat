@@ -10,6 +10,7 @@ export default class P2PMediaStream {
   constructor(options?: P2PMediaStreamConstructorOptions) {
     this.#options = {
       audio: true,
+      video: true,
       muted: true
     };
 

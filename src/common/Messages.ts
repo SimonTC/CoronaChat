@@ -31,3 +31,8 @@ export interface SUpdatePeerCellPosition {
     y: number,
   }
 }
+
+export interface IRemovePeer {
+  type: "removePeer",
+  socketId: string
+}

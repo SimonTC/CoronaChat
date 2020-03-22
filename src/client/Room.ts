@@ -1,5 +1,5 @@
 import PeerController from "../common/PeerController";
-import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition } from "../common/Messages";
+import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition, IRemovePeer } from "../common/Messages";
 import { drawPeerCell, drawGrid } from "./utils/CanvasUtils";
 import { Point } from '../common/Structures';
 import SocketHandler from './SocketHandler';
@@ -62,6 +62,14 @@ export default class Room {
 
     this.#socketHandler.on("updatePeerCellPosition", (message: SUpdatePeerCellPosition) => {
       this.#peerControllers[message.socketId].position = message.position;
+
+      this.render();
+    });
+
+    this.#socketHandler.on("removePeer", (message: IRemovePeer) => {
+      if (this.#peerControllers[message.socketId]) {
+        delete this.#peerControllers[message.socketId];
+      }
 
       this.render();
     });

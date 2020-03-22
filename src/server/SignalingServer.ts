@@ -4,7 +4,7 @@ import * as ws from "ws";
 import config from "common/config";
 import { P2PSocket } from "server/P2PSocket";
 import MessageHandler from "server/MessageHandler";
-import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CSpawnPeerCell } from 'common/Messages';
+import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CSpawnPeerCell, IRemovePeer } from 'common/Messages';
 import PeerController from 'common/PeerController';
 
 type P2PChannelCollection = {
@@ -211,13 +211,13 @@ export default class SignalingServer {
       for (const socketId in this.#channels[channel]) {
         this.#channels[channel][socketId].messageHandler.send({
           type: "removePeer",
-          peerId: socket.id
-        });
+          socketId: socket.id
+        } as IRemovePeer);
 
         socket.messageHandler.send({
           type: "removePeer",
-          peerId: socketId
-        });
+          socketId: socketId
+        } as IRemovePeer);
       }
     }
 

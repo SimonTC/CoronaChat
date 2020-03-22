@@ -1,5 +1,6 @@
 import SocketHandler from "./SocketHandler";
 import P2PMediaStream from "./P2PMediaStream";
+import { IRemovePeer } from 'common/Messages';
 
 const ICE_SERVERS: RTCIceServer[] = [{
   urls: [ "stun:stun.l.google.com:19302" ]
@@ -125,8 +126,8 @@ export default class P2PChannel {
     }
   }
 
-  private handleRemovePeer(message: any) {
-    const peerId = message.peerId as string;
+  private handleRemovePeer(message: IRemovePeer) {
+    const peerId = message.socketId as string;
 
     console.log(`Removing peer '${peerId}'`);
 
