@@ -53,7 +53,8 @@ export default class Room {
         name: message.name,
         socketId: message.ownerId,
         isOwner: message.isOwner,
-        position: message.position
+        position: message.position,
+        mood: message.mood
       });
 
       this.#peerControllers[message.ownerId] = peerController;
@@ -135,9 +136,20 @@ export default class Room {
     });
 
     this.#canvas.addEventListener("contextmenu", event => {
-      selectmood.style.visibility = "visible"
-      selectmood.style.top = (event.y- selectmood.clientHeight/2).toString()
-      selectmood.style.left = (event.x -selectmood.clientWidth/2).toString()   
+      console.log("context");
+      var ownedPeer = this.getOwnedPeer();
+      console.log(ownedPeer);
+      if(ownedPeer === undefined) return;
+      const mousePosition = {
+        x: event.clientX,
+        y: event.clientY
+      };
+      console.log("mouse");
+      if (this.intersects(mousePosition, ownedPeer.position)) {
+        selectmood.style.visibility = "visible"
+        selectmood.style.top = (event.y- selectmood.clientHeight/2).toString()
+        selectmood.style.left = (event.x -selectmood.clientWidth/2).toString()   
+      }
     });
   }
 
@@ -161,6 +173,17 @@ export default class Room {
 
   private intersects(point: Point, circleCenter: Point, radius = CELL_RADIUS) {
     return Math.sqrt((point.x - circleCenter.x) ** 2 + (point.y - circleCenter.y) ** 2) < radius;
+  }
+
+  private getOwnedPeer() : PeerController {
+    let returnElement = undefined;
+    Object.values(this.#peerControllers).forEach(element => {
+      console.log(element.isOwner)
+      if(element.isOwner) {
+        returnElement = element;
+      }
+    });
+    return returnElement
   }
 
 }

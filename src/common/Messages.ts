@@ -13,6 +13,7 @@ export interface SSpawnPeerCell {
     x: number,
     y: number
   }
+  mood: string
 }
 
 export interface CUpdatePeerCellPosition {

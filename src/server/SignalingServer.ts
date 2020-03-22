@@ -50,7 +50,8 @@ export default class SignalingServer {
       position: {
         x: ~~(Math.random() * 500),
         y: ~~(Math.random() * 500)
-      }
+      },
+      mood: "neutral"
     });
 
     for (const peerId in this.#sockets) {
@@ -60,7 +61,8 @@ export default class SignalingServer {
           isOwner: false,
           ownerId: this.#sockets[peerId].peerController.socketId,
           name: this.#sockets[peerId].peerController.name,
-          position: this.#sockets[peerId].peerController.position
+          position: this.#sockets[peerId].peerController.position,
+          mood: this.#sockets[peerId].peerController.mood
         })
       }
     }
@@ -71,7 +73,8 @@ export default class SignalingServer {
         isOwner: socket.id === peerId,
         ownerId: peerController.socketId,
         name: peerController.name,
-        position: peerController.position
+        position: peerController.position,
+        mood: peerController.mood
       });
     }
 

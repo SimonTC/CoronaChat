@@ -11,13 +11,14 @@ export default class PeerController {
     name: string,
     socketId: string,
     position: Point,
+    mood: string,
     isOwner?: boolean
   }) {
     this.#name = options.name;
     this.#socketId = options.socketId;
     this.#position = options.position;
     this.#isOwner = options.isOwner;
-    this.#mood = "neutral";
+    this.#mood = options.mood;
   }
 
   get isInstantiated() {
