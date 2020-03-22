@@ -6,7 +6,8 @@ body {
 }
 
 video {
-  visibility: hidden;
+  /* visibility: hidden; */
+  height: 300px;
 }
 
 .login {
