@@ -11,7 +11,7 @@ const ICE_SERVERS: RTCIceServer[] = [{
   credential: "qwqwqw"
 }];
 
-type P2PChannelEventType = "connected" | "peerTrackAdded";
+type P2PChannelEventType = "localStreamAdded" | "peerStreamAdded";
 
 export default class P2PChannel extends EventEmitter<P2PChannelEventType> {
   #defaultChannel = "corona";
@@ -44,12 +44,14 @@ export default class P2PChannel extends EventEmitter<P2PChannelEventType> {
   }
 
   private handleSocketConnected() {
-    this.fire("connected");
-
     this.#localMediaStream
       .getUserMedia()
       .then(stream => this.#localMediaStream.attachMediaElement(stream))
-      .then(() => this.joinChannel(this.#defaultChannel));
+      .then(() => {
+        this.fire("localStreamAdded", this.#localMediaStream);
+
+        this.sendJoinChannelMesssage(this.#defaultChannel);
+      });
   }
 
   private handleSocketDisconnected() {
@@ -102,14 +104,11 @@ export default class P2PChannel extends EventEmitter<P2PChannelEventType> {
     }
   
     peerConnection.ontrack = (event: RTCTrackEvent) => {
-      this.fire("peerTrackAdded", {
-        socketId: peerId,
-        streams: event.streams
-      });
-
       if (!this.#peerMediaStreams[peerId]) {
         this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: false });
         this.#peerMediaStreams[peerId].attachMediaElement(event.streams[0]);
+      
+        this.fire("peerStreamAdded", peerId, this.#peerMediaStreams[peerId]);
       }
     }
 
@@ -214,7 +213,7 @@ export default class P2PChannel extends EventEmitter<P2PChannelEventType> {
     peer.addIceCandidate(new RTCIceCandidate(iceCandidate));
   }
 
-  private joinChannel(channelName: string) {
+  private sendJoinChannelMesssage(channelName: string) {
     this.#socketHandler.send({
       type: "joinChannel",
       channel: channelName

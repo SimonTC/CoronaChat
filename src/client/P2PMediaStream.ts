@@ -1,14 +1,20 @@
-type P2PMediaStreamConstructorOptions = MediaStreamConstraints & {
+import { EventEmitter } from "../common/EventEmitter";
+
+export type P2PMediaStreamConstructorOptions = MediaStreamConstraints & {
   muted?: boolean;
   playsInline?: boolean;
 };
 
-export default class P2PMediaStream {
+type P2PMediaStreamEventType = "started";
+
+export default class P2PMediaStream extends EventEmitter<P2PMediaStreamEventType> {
   #options: P2PMediaStreamConstructorOptions;
   #mediaStream: MediaStream;
   #mediaElement: HTMLAudioElement | HTMLVideoElement;
 
   constructor(options?: P2PMediaStreamConstructorOptions) {
+    super();
+
     this.#options = {
       audio: true,
       video: true,
@@ -74,6 +80,8 @@ export default class P2PMediaStream {
     } else {
       (this.#mediaElement as any).src = window.URL.createObjectURL(stream); // for older browsers
     }
+
+    this.fire("started");
   }
 
   remove() {

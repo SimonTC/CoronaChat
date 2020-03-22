@@ -1,13 +1,16 @@
 import Peer from "../common/Peer";
-import { CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, IRemovePeer, SSpawnPeerCell, SUpdatePeerCellPosition } from "../common/Messages";
+import { CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, IRemovePeer, SSpawnPeerCell, SUpdatePeerCellPosition, IConnected } from "../common/Messages";
 import { Point } from "../common/Structures";
 import SocketHandler from "./SocketHandler";
 import RoomRenderer from "./RoomRenderer";
 import PeerController from "./PeerController";
+import P2PMediaStream from "./P2PMediaStream";
+import { getManhattanDistance } from "./utils/MathUtils";
 
 export default class Room {
   #socketHandler: SocketHandler;
   #renderer: RoomRenderer;
+  #ownerSocketId: string;
   #peerControllers: {
     [socketId: string]: PeerController
   } = {};
@@ -16,13 +19,29 @@ export default class Room {
     this.#socketHandler = socketHandler;
     this.#renderer = renderer;
 
-    this.#renderer.on("peerCellMove", (position: Point) => this.sendUpdatePeerPositionMessage(position));
+    this.#renderer.on("peerCellMove", (position: Point) => this.handlePlayerCellMove(position));
     this.#renderer.on("updatePeerMood", (mood: string) => this.sendUpdatePeerMoodMessage(mood));
 
     this.setupSocketHandlerEvents();
   }
 
+  addLocalStream(mediaStream: P2PMediaStream) {
+    this.setupPeerController(this.#ownerSocketId, { mediaStream });
+  }
+
+  addPeerStream(socketId: string, mediaStream: P2PMediaStream) {
+    this.setupPeerController(socketId, { mediaStream });
+  }
+
   private setupSocketHandlerEvents() {
+    this.#socketHandler.on("connected", (message: IConnected) => {
+      this.setupPeerController(message.socketId);
+
+      message.peers.forEach(peerSocketId => {
+        this.setupPeerController(peerSocketId);
+      });
+    })
+
     this.#socketHandler.on("removePeer", (message: IRemovePeer) => {
       if (this.#peerControllers[message.socketId]) {
         delete this.#peerControllers[message.socketId];
@@ -32,6 +51,10 @@ export default class Room {
     });
   
     this.#socketHandler.on("spawnPeerCell", (message: SSpawnPeerCell) => {
+      if (message.isOwner) {
+        this.#ownerSocketId = message.ownerId;
+      }
+
       const peer = new Peer({
         name: message.name,
         socketId: message.ownerId,
@@ -41,8 +64,7 @@ export default class Room {
       });
 
       this.#renderer.addPeer(peer);
-      
-      this.#peerControllers[message.ownerId] = new PeerController(peer);
+      this.setupPeerController(message.ownerId, { peer });
     });
   
     this.#socketHandler.on("updatePeerCellPosition", (message: SUpdatePeerCellPosition) => {
@@ -52,6 +74,21 @@ export default class Room {
     this.#socketHandler.on("updatePeerMood", (message: SUpdatePeerMood) => {
       this.#renderer.updatePeerMood(message.socketId, message.mood);
     });
+  }
+
+  private handlePlayerCellMove(position: Point) {
+    const ownerPosition = this.#peerControllers[this.#ownerSocketId].peer.position;
+
+    for (const socketId in this.#peerControllers) {
+      if (socketId !== this.#ownerSocketId) {
+        const peerController = this.#peerControllers[socketId];
+        const distanceToPeer = getManhattanDistance(ownerPosition, peerController.peer.position);
+        const gain = this.getGainFromDistance(distanceToPeer);
+
+        peerController.setGain(gain);
+      }
+    }
+    this.sendUpdatePeerPositionMessage(position);
   }
 
   private sendUpdatePeerPositionMessage(position: Point) {
@@ -70,6 +107,27 @@ export default class Room {
     };
 
     this.#socketHandler.send(message);
+  }
+
+  private setupPeerController(socketId: string, options?: {
+    peer?: Peer,
+    mediaStream?: P2PMediaStream
+  }) {
+    if (!(socketId in this.#peerControllers)) {
+      this.#peerControllers[socketId] = new PeerController();
+    }
+
+    if (options?.peer) {
+      this.#peerControllers[socketId].peer = options.peer;
+    }
+
+    if (options?.mediaStream) {
+      this.#peerControllers[socketId].mediaStream = options.mediaStream;
+    }
+  }
+
+  private getGainFromDistance(distance: number) {
+    return Math.max(-1 * Math.log10(distance) * 50 + 150, 0);
   }
 
 }

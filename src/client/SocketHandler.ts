@@ -15,8 +15,6 @@ export default class SocketHandler extends EventEmitter<SocketHandlerEventType> 
       console.log("Connected to signaling server");
 
       this.#socket.onmessage = this.handleMessage.bind(this);
-
-      this.fire("connected");
     };
 
     this.#socket.onclose = () => {

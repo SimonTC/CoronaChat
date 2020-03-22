@@ -6,6 +6,7 @@ import { createLogin } from "./utils/LoginUtils";
 import Room from "./Room";
 import { CSpawnPeerCell } from "../common/Messages";
 import RoomRenderer from "./RoomRenderer";
+import P2PMediaStream from "./P2PMediaStream";
 
 createLogin(username => {
   const socketHandler = new SocketHandler();
@@ -14,6 +15,9 @@ createLogin(username => {
   const canvasElement = createCanvas();
   const renderer = new RoomRenderer(canvasElement);
   const room = new Room(socketHandler, renderer);
+
+  channel.on("localStreamAdded", (stream: P2PMediaStream) => room.addLocalStream(stream));
+  channel.on("peerStreamAdded", (socketId: string, stream: P2PMediaStream) => room.addPeerStream(socketId, stream));
 
   socketHandler.on("connected", () => {
     const message: CSpawnPeerCell = {

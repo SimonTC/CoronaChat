@@ -4,7 +4,7 @@ import * as ws from "ws";
 import config from "common/config";
 import { P2PSocket } from "server/P2PSocket";
 import MessageHandler from "server/MessageHandler";
-import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell, IRemovePeer, IPing } from 'common/Messages';
+import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell, IRemovePeer, IPing, IConnected } from 'common/Messages';
 import Peer from 'common/Peer';
 
 type P2PChannelCollection = {
@@ -183,6 +183,13 @@ export default class SignalingServer {
     this.#sockets[socket.id] = socket;
 
     socket.messageHandler = new MessageHandler(socket);
+
+    socket.messageHandler.send({
+      type: "connected",
+      socketId: socket.id,
+      peers: Object.keys(this.#sockets).filter(s => s !== socket.id)
+    } as IConnected);
+
     socket.messageHandler.on("spawnPeerCell", message => this.handleSpawnPeerCell(socket, message));
     socket.messageHandler.on("updatePeerCellPosition", message => this.handleUpdatePeerCellPosition(socket, message));
     socket.messageHandler.on("joinChannel", message => this.handleJoinChannel(socket, message));

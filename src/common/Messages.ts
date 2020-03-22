@@ -56,3 +56,9 @@ export interface SUpdatePeerMood {
   socketId: string,
   mood: string
 }
+
+export interface IConnected {
+  type: "connected",
+  socketId: string,
+  peers: string[]
+}

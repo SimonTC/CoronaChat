@@ -90,8 +90,6 @@ export default class RoomRenderer extends EventEmitter<RendererEventType> {
   }
 
   private setupCanvasEvents() {
-    window.addEventListener('resize', () => this.render());
-
     this.#canvas.addEventListener("mousedown", event => {
       const mousePosition = {
         x: event.clientX,
@@ -112,8 +110,6 @@ export default class RoomRenderer extends EventEmitter<RendererEventType> {
         };
 
         this.fire("peerCellMove", this.#draggingPeer.position);
-
-        this.render();
       }
     });
 
@@ -136,8 +132,6 @@ export default class RoomRenderer extends EventEmitter<RendererEventType> {
         ownedPeer.mood = target.value;
 
         this.fire("updatePeerMood", ownedPeer.mood);
-
-        this.render();
       }
     });
 
