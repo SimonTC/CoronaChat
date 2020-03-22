@@ -82,7 +82,7 @@ export default class P2PChannel {
   
     // @ts-ignore
     peerConnection.onaddstream = event => {
-      this.#peerMediaStreams[peerId] = new P2PMediaStream();
+      this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: false });
       this.#peerMediaStreams[peerId].setup()
         .then(() => {
           if ("srcObject" in this.#peerMediaStreams[peerId].mediaElement) {
