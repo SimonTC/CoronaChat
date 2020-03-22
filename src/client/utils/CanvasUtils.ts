@@ -15,11 +15,13 @@ export function createCanvas(): HTMLCanvasElement {
 
 export function drawPeerCell(context: CanvasRenderingContext2D, name: string, position: Point, isOwner: boolean, mood: string, radius = 50) {
   context.beginPath();
+  context.setLineDash([]);
   context.arc(position.x, position.y, radius, 0, Math.PI * 2, true);
-  context.fillStyle = isOwner ? 'green' : 'orange';
+  context.fillStyle = isOwner ? 'rgb(0,128,0)' : 'rgb(255,165,0)';
   context.fill();
   context.lineWidth = 5;
   context.strokeStyle = '#003300';
+  context.closePath();
   context.stroke();
 
   context.font = "bold 18px sans-serif";
@@ -30,6 +32,14 @@ export function drawPeerCell(context: CanvasRenderingContext2D, name: string, po
   context.font = "bold 14px sans-serif";
   context.fillStyle = 'cyan';
   context.fillText(mood, position.x, position.y+10);
+
+  context.beginPath();
+  context.setLineDash([5, 5]);
+  context.beginPath();
+  context.arc(position.x, position.y, 300, 0, Math.PI * 2);
+  context.strokeStyle = isOwner ? 'rgba(0, 128, 0, 0.3)' : 'rgba(255, 165, 0, 0.3)';
+  context.closePath();
+  context.stroke();
 
 }
 

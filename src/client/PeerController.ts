@@ -56,7 +56,7 @@ export default class PeerController {
   updateCameraPosition() {
     if (this.#mediaStream?.mediaElement) {
       this.#mediaStream.mediaElement.style.top = `${this.peer.position.y - 70}px`;
-      this.#mediaStream.mediaElement.style.left = `${this.peer.position.x + 50}px`;
+      this.#mediaStream.mediaElement.style.left = `${this.peer.position.x + 55}px`;
     }
   }
 
