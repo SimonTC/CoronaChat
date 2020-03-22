@@ -27,10 +27,14 @@ export default class Room {
 
   addLocalStream(mediaStream: P2PMediaStream) {
     this.setupPeerController(this.#ownerSocketId, { mediaStream });
+
+    this.#peerControllers[this.#ownerSocketId].updateCameraPosition();
   }
 
   addPeerStream(socketId: string, mediaStream: P2PMediaStream) {
     this.setupPeerController(socketId, { mediaStream });
+
+    this.#peerControllers[socketId].updateCameraPosition();
   }
 
   private setupSocketHandlerEvents() {
@@ -69,7 +73,9 @@ export default class Room {
   
     this.#socketHandler.on("updatePeerCellPosition", (message: SUpdatePeerCellPosition) => {
       this.#renderer.updatePeerPosition(message.socketId, message.position);
-    });
+
+      this.#peerControllers[message.socketId].updateCameraPosition();
+      });
 
     this.#socketHandler.on("updatePeerMood", (message: SUpdatePeerMood) => {
       this.#renderer.updatePeerMood(message.socketId, message.mood);
@@ -77,17 +83,8 @@ export default class Room {
   }
 
   private handlePlayerCellMove(position: Point) {
-    const ownerPosition = this.#peerControllers[this.#ownerSocketId].peer.position;
-
-    for (const socketId in this.#peerControllers) {
-      if (socketId !== this.#ownerSocketId) {
-        const peerController = this.#peerControllers[socketId];
-        const distanceToPeer = getManhattanDistance(ownerPosition, peerController.peer.position);
-        const gain = this.getGainFromDistance(distanceToPeer);
-
-        peerController.setGain(gain);
-      }
-    }
+    this.updateCameraPosition(position);
+    this.updatePeerGains();
     this.sendUpdatePeerPositionMessage(position);
   }
 
@@ -123,6 +120,26 @@ export default class Room {
 
     if (options?.mediaStream) {
       this.#peerControllers[socketId].mediaStream = options.mediaStream;
+    }
+  }
+
+  private updateCameraPosition(position: Point) {
+    const ownerPeerController = this.#peerControllers[this.#ownerSocketId];
+
+    ownerPeerController.updateCameraPosition();
+  }
+
+  private updatePeerGains() {
+    const ownerPosition = this.#peerControllers[this.#ownerSocketId].peer.position;
+
+    for (const socketId in this.#peerControllers) {
+      if (socketId !== this.#ownerSocketId) {
+        const peerController = this.#peerControllers[socketId];
+        const distanceToPeer = getManhattanDistance(ownerPosition, peerController.peer.position);
+        const gain = this.getGainFromDistance(distanceToPeer);
+
+        peerController.setGain(gain);
+      }
     }
   }
 

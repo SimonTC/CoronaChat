@@ -48,7 +48,16 @@ export default class PeerController {
   }
 
   setGain(value: number) {
+    this.#mediaStream.mediaElement.muted = value > 0;
+
     this.#gainFilter.gain.value = value;
+  }
+
+  updateCameraPosition() {
+    if (this.#mediaStream?.mediaElement) {
+      this.#mediaStream.mediaElement.style.top = `${this.peer.position.y - 70}px`;
+      this.#mediaStream.mediaElement.style.left = `${this.peer.position.x + 50}px`;
+    }
   }
 
   private addAudioFilters() {

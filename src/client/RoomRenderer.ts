@@ -71,7 +71,7 @@ export default class RoomRenderer extends EventEmitter<RendererEventType> {
   private render(deltaT: number) {
     this.clear();
 
-    drawGrid(this.#context);
+    // drawGrid(this.#context);
 
     this.#peers.forEach(peer => {
       if (peer.isInstantiated) {
