@@ -28,12 +28,14 @@ export default class SocketHandler extends EventEmitter<SocketHandlerEventType> 
 
   get socketServerUrl() {
     const port = process.env.PORT || config.socketServerPort;
+    const isSecure = window.location.protocol.startsWith("https");
+    const protocol = isSecure ? "wss" : "ws";
 
     if (process.env.NODE_ENV === 'development') {
-      return `ws://${window.location.hostname}:${port}`;
+      return `${protocol}://${window.location.hostname}:${port}`;
     }
     
-    return `ws://${window.location.hostname}`;
+    return `${protocol}://${window.location.hostname}`;
   }
 
   send(message: any) {
