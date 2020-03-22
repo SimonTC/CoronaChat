@@ -105,6 +105,18 @@ export default class Room {
         this.#draggingPeer = null;
       }
     });
+    
+    var selectmood = document.getElementById("moodselector");
+    selectmood.addEventListener("change", event => {
+      //console.log("name: " + event.target.value + ", value: ")
+      selectmood.style.visibility = "hidden"
+    });
+
+    this.#canvas.addEventListener("contextmenu", event => {
+      selectmood.style.visibility = "visible"
+      selectmood.style.top = (event.y- selectmood.clientHeight/2).toString()
+      selectmood.style.left = (event.x -selectmood.clientWidth/2).toString()   
+    });
   }
 
   private updatePeerPosition(position: Point) {

@@ -4,6 +4,14 @@
     <link rel="stylesheet" type="text/css" href="../assets/style.css">
   </head>
   <body>
+    <div id="moodselector" class="selector" >
+      <select  name="moods">
+        <option value="neutral">neutral</option>
+        <option value="happy">happy</option>
+        <option value="sad">sad</option>
+        <option value="corona">corona</option>
+      </select>
+    </div>
     <div class="login js-login">
       <div class="login-content">
         <input type="text" autofocus placeholder="Name" class="user-name js-user-name" maxlength="25" />
@@ -11,6 +19,7 @@
       </div>
     </div>
     <div class="room">
+
       <canvas tabindex="-1" class="room-canvas js-room-canvas"></canvas>
     </div>
     <script src="./index.ts"></script>
