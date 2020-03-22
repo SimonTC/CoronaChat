@@ -1,4 +1,4 @@
-import { Point } from 'client/Structures';
+import { Point } from '../../common/Structures';
 
 export function createCanvas(): HTMLCanvasElement {
   const canvasHtmlElement = window.document.querySelector(".js-room-canvas") as HTMLCanvasElement;

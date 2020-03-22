@@ -4,7 +4,7 @@ import * as ws from "ws";
 import config from "common/config";
 import { P2PSocket } from "server/P2PSocket";
 import MessageHandler from "server/MessageHandler";
-import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell } from 'common/Messages';
+import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell, IRemovePeer, IPing } from 'common/Messages';
 import PeerController from 'common/PeerController';
 
 type P2PChannelCollection = {
@@ -22,6 +22,7 @@ export default class SignalingServer {
   #socketServer: ws.Server;
   #channels: P2PChannelCollection = {};
   #sockets: P2PSocketCollection = {};
+  #heartbeatInterval: NodeJS.Timeout;
 
   constructor(server: Server) {
     this.#httpServer = server;
@@ -192,8 +193,18 @@ export default class SignalingServer {
 
     socket.on("error", (error) => this.handleSocketError(socket, error));
     socket.on("close", () => this.handleCloseConnection(socket));
+    
+    this.startHeartbeat(socket);
 
     console.log(`Socket '${socket.id}' connection has been established.`);
+  }
+
+  private startHeartbeat(socket: P2PSocket) {
+    this.#heartbeatInterval = setInterval(() => {
+      socket.messageHandler.send({
+        type: "ping"
+      } as IPing);
+    }, config.heartbeatInterval);
   }
 
   private handleSocketConnectionError(error: Error) {
@@ -228,13 +239,13 @@ export default class SignalingServer {
       for (const socketId in this.#channels[channel]) {
         this.#channels[channel][socketId].messageHandler.send({
           type: "removePeer",
-          peerId: socket.id
-        });
+          socketId: socket.id
+        } as IRemovePeer);
 
         socket.messageHandler.send({
           type: "removePeer",
-          peerId: socketId
-        });
+          socketId: socketId
+        } as IRemovePeer);
       }
     }
 

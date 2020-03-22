@@ -32,6 +32,19 @@ export interface SUpdatePeerCellPosition {
   }
 }
 
+export interface IRemovePeer {
+  type: "removePeer",
+  socketId: string
+}
+
+export interface IPing {
+  type: "ping"
+}
+
+export interface IPong {
+  type: "pong"
+}
+
 export interface CUpdatePeerMood {
   type: "updatePeerMood",
   mood: string
