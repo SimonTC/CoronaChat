@@ -1,5 +1,4 @@
 import PeerController from "../common/PeerController";
-import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition, IRemovePeer } from "../common/Messages";
 import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, IRemovePeer } from "../common/Messages";
 import { drawPeerCell, drawGrid } from "./utils/CanvasUtils";
 import { Point } from '../common/Structures';

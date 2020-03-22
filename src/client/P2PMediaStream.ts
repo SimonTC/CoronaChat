@@ -34,16 +34,20 @@ export default class P2PMediaStream {
 
   getUserMedia(): Promise<MediaStream> {
     return new Promise((resolve, reject) => {
-      if (!navigator.getUserMedia) {
+      const userMediaPromise = this._getUserMedia();
+
+      if (!userMediaPromise) {
         const errorElement = document.createElement("div");
         errorElement.innerText = "Media is not supported on your browser or connection is not secure.";
         document.body.appendChild(errorElement);
 
         reject(new Error("Unsupported media"));
       } else {
-        return navigator.getUserMedia(this.#options, resolve, () => {
-          reject(new Error("Access denied for media stream."))
-        });
+        return userMediaPromise
+          .then(resolve)
+          .catch(() => {
+            reject(new Error("Access denied for media stream"));
+          })
       }
     });
   }
@@ -74,5 +78,19 @@ export default class P2PMediaStream {
 
   remove() {
     document.body.removeChild(this.#mediaElement);
+  }
+
+  private _getUserMedia(): Promise<MediaStream> {
+    // @ts-ignore
+    const getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+    if (getUserMedia) {
+      const promisifiedGetUserMedia: Promise<MediaStream> = new Promise((resolve, reject) => {
+        getUserMedia.call(navigator, this.#options, resolve, reject);
+      });
+      
+      return promisifiedGetUserMedia;
+    }
+
+    return null;
   }
 }
