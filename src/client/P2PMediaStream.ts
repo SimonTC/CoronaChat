@@ -11,7 +11,7 @@ export default class P2PMediaStream {
     this.#options = {
       audio: true,
       video: true,
-      muted: true
+      muted: false
     };
 
     if (options) {
