@@ -52,7 +52,13 @@ export default class SocketHandler extends EventEmitter<SocketHandlerEventType> 
       console.error(`Failed to parse payload`, message.data);
     }
 
-    this.fire(payload.type, payload);
+    if (payload.type === "ping") {
+      this.send({
+        type: "pong"
+      });
+    } else {
+      this.fire(payload.type, payload);
+    }
   }
 
 }

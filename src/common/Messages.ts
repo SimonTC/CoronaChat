@@ -36,3 +36,11 @@ export interface IRemovePeer {
   type: "removePeer",
   socketId: string
 }
+
+export interface IPing {
+  type: "ping"
+}
+
+export interface IPong {
+  type: "pong"
+}
