@@ -19,10 +19,7 @@ export default class P2PChannel {
   } = {};
 
   constructor(socketHandler: SocketHandler) {
-    this.#localMediaStream = new P2PMediaStream({
-      audio: true,
-      video: true
-    });
+    this.#localMediaStream = new P2PMediaStream();
 
     this.#socketHandler = socketHandler;
 
@@ -85,11 +82,7 @@ export default class P2PChannel {
   
     // @ts-ignore
     peerConnection.onaddstream = event => {
-      this.#peerMediaStreams[peerId] = new P2PMediaStream({
-        audio: true,
-        video: true,
-        muted: false
-      });
+      this.#peerMediaStreams[peerId] = new P2PMediaStream();
       this.#peerMediaStreams[peerId].setup()
         .then(() => {
           if ("srcObject" in this.#peerMediaStreams[peerId].mediaElement) {
