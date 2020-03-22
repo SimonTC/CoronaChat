@@ -31,3 +31,14 @@ export interface SUpdatePeerCellPosition {
     y: number,
   }
 }
+
+export interface CUpdatePeerMood {
+  type: "updatePeerMood",
+  mood: string
+}
+
+export interface SUpdatePeerMood {
+  type: "updatePeerMood",
+  socketId: string,
+  mood: string
+}

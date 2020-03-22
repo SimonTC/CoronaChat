@@ -4,7 +4,7 @@ import * as ws from "ws";
 import config from "common/config";
 import { P2PSocket } from "server/P2PSocket";
 import MessageHandler from "server/MessageHandler";
-import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CSpawnPeerCell } from 'common/Messages';
+import { SUpdatePeerCellPosition, CUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood, CSpawnPeerCell } from 'common/Messages';
 import PeerController from 'common/PeerController';
 
 type P2PChannelCollection = {
@@ -93,6 +93,22 @@ export default class SignalingServer {
     }
   }
 
+  private handleUpdatePeerMood(socket: P2PSocket, receivedMessage: CUpdatePeerMood) {
+    this.#sockets[socket.id].peerController.mood = receivedMessage.mood;
+
+    for (const peerId in this.#sockets) {
+      if (peerId !== socket.id) {
+        const message: SUpdatePeerMood = {
+          type: "updatePeerMood",
+          socketId: socket.id,
+          mood: receivedMessage.mood
+        }
+
+        this.#sockets[peerId].messageHandler.send(message)
+      }
+    }
+  }
+
   private handleRelayICECandidate(socket: P2PSocket, message: any) {
     const peerId = message.peerId  as string;
     const iceCandidate = message.iceCandidate as any;
@@ -168,6 +184,7 @@ export default class SignalingServer {
     socket.messageHandler.on("joinChannel", message => this.handleJoinChannel(socket, message));
     socket.messageHandler.on("relayICECandidate", message => this.handleRelayICECandidate(socket, message));
     socket.messageHandler.on("relaySessionDescription", message => this.handleRelaySessionDescription(socket, message));
+    socket.messageHandler.on("updatePeerMood", message => this.handleUpdatePeerMood(socket, message));
 
     socket.on("message", (message) => {
       socket.messageHandler.handleMessage(message);

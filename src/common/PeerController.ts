@@ -50,7 +50,6 @@ export default class PeerController {
   }
 
   set mood(mood) {
-    if(this.#isOwner)
-      this.#mood = mood;
+    this.#mood = mood;
   }
 }

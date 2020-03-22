@@ -1,5 +1,5 @@
 import PeerController from "../common/PeerController";
-import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition } from "../common/Messages";
+import { SSpawnPeerCell, CUpdatePeerCellPosition, SUpdatePeerCellPosition, CUpdatePeerMood, SUpdatePeerMood } from "../common/Messages";
 import { drawPeerCell, drawGrid } from "./utils/CanvasUtils";
 import { Point } from '../common/Structures';
 import SocketHandler from './SocketHandler';
@@ -65,6 +65,12 @@ export default class Room {
 
       this.render();
     });
+
+    this.#socketHandler.on("updatePeerMood", (message: SUpdatePeerMood) => {
+      this.#peerControllers[message.socketId].mood = message.mood;
+
+      this.render();
+    });
   }
 
   private setupCanvasEvents() {
@@ -113,6 +119,7 @@ export default class Room {
       Object.values(this.#peerControllers).forEach(element => {
         if(element.isOwner) {
             element.mood = event.target.value;
+            this.updatePeerMood(event.target.value)
             this.render();
         }
       });
@@ -129,6 +136,15 @@ export default class Room {
     const message: CUpdatePeerCellPosition = {
       type: "updatePeerCellPosition",
       position
+    };
+
+    this.#socketHandler.send(message);
+  }
+
+  private updatePeerMood(mood: string) {
+    const message: CUpdatePeerMood = {
+      type: "updatePeerMood",
+      mood
     };
 
     this.#socketHandler.send(message);
