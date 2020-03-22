@@ -3,13 +3,21 @@ type P2PMediaStreamConstructorOptions = MediaStreamConstraints & {
 };
 
 export default class P2PMediaStream {
-  #options: P2PMediaStreamConstructorOptions = { audio: true, muted: true };
+  #options: P2PMediaStreamConstructorOptions;
   #mediaStream: MediaStream;
   #mediaElement: HTMLAudioElement | HTMLVideoElement;
 
   constructor(options?: P2PMediaStreamConstructorOptions) {
+    this.#options = {
+      audio: true,
+      muted: true
+    };
+
     if (options) {
-      this.#options = options;
+      this.#options = {
+        ...this.#options,
+        ...options
+      };
     }
   }
 
