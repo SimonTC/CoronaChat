@@ -62,13 +62,19 @@ export default class P2PChannel {
       return;
     }
 
-    const peerConnection = new RTCPeerConnection({
-      iceServers: ICE_SERVERS,
-    });
+    const rtcConfiguration: RTCConfiguration = {
+      iceServers: ICE_SERVERS
+    };
+    const rtcOptionalOptions = {
+      optional: [ {"DtlsSrtpKeyAgreement": true}]
+    };
+
+    // @ts-ignore
+    const peerConnection = new RTCPeerConnection(rtcConfiguration, rtcOptionalOptions);
 
     this.#peers[peerId] = peerConnection;
     
-    peerConnection.onicecandidate = event => {
+    peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
       if (event.candidate) {
         this.#socketHandler.send({
           type: "relayICECandidate",
