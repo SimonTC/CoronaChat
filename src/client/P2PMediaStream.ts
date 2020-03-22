@@ -1,5 +1,6 @@
 type P2PMediaStreamConstructorOptions = MediaStreamConstraints & {
-  muted?: boolean
+  muted?: boolean;
+  playsInline?: boolean;
 };
 
 export default class P2PMediaStream {
@@ -11,7 +12,8 @@ export default class P2PMediaStream {
     this.#options = {
       audio: true,
       video: true,
-      muted: false
+      muted: false,
+      playsInline: true
     };
 
     if (options) {
@@ -47,6 +49,7 @@ export default class P2PMediaStream {
     
           this.#mediaElement.setAttribute("autoplay", "autoplay");
           this.#mediaElement.setAttribute("muted", this.#options.muted ? "true" : "false");
+          this.#mediaElement.setAttribute("playsinline", this.#options.playsInline ? "true" : "fasle");
           this.#mediaElement.setAttribute("controls", "");
     
           document.body.appendChild(this.#mediaElement);
