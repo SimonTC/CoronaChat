@@ -1,4 +1,5 @@
 import { EventEmitter } from "../common/EventEmitter";
+import config from '../common/config';
 
 type SocketHandlerEventType = "connected" | "disconnected" | string;
 
@@ -8,7 +9,7 @@ export default class SocketHandler extends EventEmitter<SocketHandlerEventType> 
   constructor() {
     super();
 
-    this.#socket = new WebSocket(`ws://corona.local:3000`);
+    this.#socket = new WebSocket(this.socketServerUrl);
 
     this.#socket.onopen = event => {
       console.log("Connected to signaling server");
@@ -23,6 +24,16 @@ export default class SocketHandler extends EventEmitter<SocketHandlerEventType> 
       
       this.fire("disconnected");
     }
+  }
+
+  get socketServerUrl() {
+    const port = process.env.PORT || config.socketServerPort;
+
+    if (process.env.NODE_ENV === 'development') {
+      return `ws://${window.location.hostname}:${port}`;
+    }
+    
+    return `ws://${window.location.hostname}`;
   }
 
   send(message: any) {

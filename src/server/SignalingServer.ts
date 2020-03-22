@@ -28,8 +28,10 @@ export default class SignalingServer {
   }
 
   start() {
-    this.#httpServer.listen(config.socketServerPort, () => {
-      console.log(`HTTP server running on ${config.socketServerPort} port.`);
+    const port = process.env.PORT || config.socketServerPort;
+
+    this.#httpServer.listen(port, () => {
+      console.log(`HTTP server running on ${port} port.`);
 
       this.#socketServer = new ws.Server({ server: this.#httpServer });
 
