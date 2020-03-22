@@ -3,7 +3,11 @@ import P2PMediaStream from "./P2PMediaStream";
 import { IRemovePeer } from 'common/Messages';
 
 const ICE_SERVERS: RTCIceServer[] = [{
-  urls: [ "stun:stun.l.google.com:19302" ]
+  urls: [ "stun:stun.l.google.com:19302" ],
+}, {
+  urls: [ "turn:numb.viagenie.ca" ],
+  username: "h.guzas@gmail.com",
+  credential: "qwqwqw"
 }];
 
 export default class P2PChannel {
@@ -89,7 +93,7 @@ export default class P2PChannel {
   
     // @ts-ignore
     peerConnection.onaddstream = event => {
-      this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: false });
+      this.#peerMediaStreams[peerId] = new P2PMediaStream({ muted: true });
       this.#peerMediaStreams[peerId].setup()
         .then(() => {
           if ("srcObject" in this.#peerMediaStreams[peerId].mediaElement) {
