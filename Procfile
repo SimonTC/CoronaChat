@@ -1,1 +1,1 @@
-web: npm run build-client && npm run start-server
+web: parcel build ./src/client/index.html && npm run start-server
