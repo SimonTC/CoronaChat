@@ -11,12 +11,6 @@ export default class PeerController {
     this.#gainFilter
   ];
 
-  constructor() {
-    this.#filters.push(...[
-      this.#audioContext.createGain()
-    ]);
-  }
-
   get peer() {
     return this.#peer;
   }
